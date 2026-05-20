@@ -31,6 +31,11 @@
   box-sizing: border-box;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 body {
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   background: var(--bg);
@@ -689,10 +694,30 @@ input[type="range"]::-webkit-slider-thumb {
   padding: 1.25rem;
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0 auto;
   transition:
     background-color 0.35s ease,
     border-color 0.35s ease,
     box-shadow 0.35s ease;
+}
+
+#qrcode {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#qrcode svg,
+#qrcode canvas {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 /* ── Action Buttons ── */
@@ -1055,4 +1080,28 @@ input[type="range"]::-webkit-slider-thumb {
   background: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
+}
+
+/* ── Narrow Mobile Devices Extra Polish ── */
+@media (max-width: 480px) {
+  .preview-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
+
+  .presets-grid {
+    gap: 0.4rem;
+  }
+
+  .preset-btn {
+    padding: 0.5rem 0.25rem;
+  }
 }
