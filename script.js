@@ -57,7 +57,18 @@ const translations = {
     "donate-footer-text": "Serás redirigido a PayPal de forma segura.",
     "copied": "¡Copiado!",
     "copy-error": "Tu navegador no soporta la copia directa. Intenta descargar el PNG.",
-    "file-size-error": "El archivo excede el límite de 5 MB."
+    "file-size-error": "El archivo excede el límite de 5 MB.",
+    "badge-no-expire": "El código QR no caduca y es ilimitado",
+    "badge-suggestion": "¿Sugerencias o solicitudes? Envíanos un mensaje",
+    "contact-title": "Enviar mensaje",
+    "contact-label-email": "Tu correo electrónico",
+    "contact-label-message": "Mensaje o sugerencia",
+    "contact-placeholder-email": "ejemplo@correo.com",
+    "contact-placeholder-message": "Cuéntanos en qué podemos mejorar o qué funcionalidad te gustaría ver...",
+    "contact-btn-send": "Enviar",
+    "contact-sending": "Enviando...",
+    "contact-success": "¡Mensaje enviado con éxito! Gracias por tu apoyo.",
+    "contact-error-send": "Ocurrió un error al enviar. Por favor intenta de nuevo."
   },
   en: {
     "subtitle": "Professional Generator",
@@ -114,7 +125,18 @@ const translations = {
     "donate-footer-text": "You will be redirected securely to PayPal.",
     "copied": "Copied!",
     "copy-error": "Your browser does not support direct copying. Try downloading the PNG.",
-    "file-size-error": "The file exceeds the 5 MB limit."
+    "file-size-error": "The file exceeds the 5 MB limit.",
+    "badge-no-expire": "The QR code does not expire and is unlimited",
+    "badge-suggestion": "Suggestions or requests? Send us a message",
+    "contact-title": "Send message",
+    "contact-label-email": "Your email address",
+    "contact-label-message": "Message or suggestion",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "Tell us how we can improve or what feature you'd like to see...",
+    "contact-btn-send": "Send",
+    "contact-sending": "Sending...",
+    "contact-success": "Message sent successfully! Thank you for your support.",
+    "contact-error-send": "An error occurred while sending. Please try again."
   },
   zh: {
     "subtitle": "专业生成器",
@@ -171,7 +193,18 @@ const translations = {
     "donate-footer-text": "您将被安全地重定向到 PayPal。",
     "copied": "已复制！",
     "copy-error": "您的浏览器不支持直接复制。请尝试下载 PNG。",
-    "file-size-error": "文件超过 5 MB 限制。"
+    "file-size-error": "文件超过 5 MB 限制。",
+    "badge-no-expire": "二维码永不过期，且无生成限制",
+    "badge-suggestion": "有什么建议或需求？给我们发送留言",
+    "contact-title": "发送留言",
+    "contact-label-email": "您的电子邮件地址",
+    "contact-label-message": "留言或建议",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "告诉我们如何改进，或者您希望看到什么功能...",
+    "contact-btn-send": "发送",
+    "contact-sending": "发送中...",
+    "contact-success": "留言发送成功！感谢您的支持。",
+    "contact-error-send": "发送时出错，请重试。"
   },
   ru: {
     "subtitle": "Профессиональный Генератор",
@@ -228,7 +261,18 @@ const translations = {
     "donate-footer-text": "Вы будете безопасно перенаправлены на PayPal.",
     "copied": "Скопировано!",
     "copy-error": "Ваш браузер не поддерживает прямое копирование. Попробуйте скачать PNG.",
-    "file-size-error": "Файл превышает лимит 5 МБ."
+    "file-size-error": "Файл превышает лимит 5 МБ.",
+    "badge-no-expire": "QR-код не имеет срока действия и не ограничен",
+    "badge-suggestion": "Есть предложения или запросы? Отправьте сообщение",
+    "contact-title": "Отправить сообщение",
+    "contact-label-email": "Ваш адрес эл. почты",
+    "contact-label-message": "Сообщение или предложение",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "Расскажите, как мы можем улучшить сервис или какую функцию вы хотели бы видеть...",
+    "contact-btn-send": "Отправить",
+    "contact-sending": "Отправка...",
+    "contact-success": "Сообщение успешно отправлено! Спасибо за вашу поддержку.",
+    "contact-error-send": "Произошла ошибка при отправке. Пожалуйста, попробуйте еще раз."
   },
   de: {
     "subtitle": "Professioneller Generator",
@@ -285,7 +329,18 @@ const translations = {
     "donate-footer-text": "Sie werden sicher zu PayPal weitergeleitet.",
     "copied": "Kopiert!",
     "copy-error": "Ihr Browser unterstützt kein direktes Kopieren. Versuchen Sie, die PNG-Datei herunterzuladen.",
-    "file-size-error": "Die Datei überschreitet das Limit von 5 MB."
+    "file-size-error": "Die Datei überschreitet das Limit von 5 MB.",
+    "badge-no-expire": "Der QR-Code läuft nicht ab und ist unbegrenzt",
+    "badge-suggestion": "Vorschläge oder Wünsche? Senden Sie uns eine Nachricht",
+    "contact-title": "Nachricht senden",
+    "contact-label-email": "Ihre E-Mail-Adresse",
+    "contact-label-message": "Nachricht oder Vorschlag",
+    "contact-placeholder-email": "beispiel@mail.com",
+    "contact-placeholder-message": "Sagen Sie uns, wie wir uns verbessern können oder welche Funktion Sie sich wünschen...",
+    "contact-btn-send": "Senden",
+    "contact-sending": "Wird gesendet...",
+    "contact-success": "Nachricht erfolgreich gesendet! Vielen Dank für Ihre Unterstützung.",
+    "contact-error-send": "Fehler beim Senden. Bitte versuchen Sie es erneut."
   },
   it: {
     "subtitle": "Generatore Professionale",
@@ -342,7 +397,18 @@ const translations = {
     "donate-footer-text": "Sarai reindirizzato a PayPal in modo sicuro.",
     "copied": "Copiato!",
     "copy-error": "Il tuo browser non supporta la copia directa. Prova a scaricare il PNG.",
-    "file-size-error": "Il file supera il limite di 5 MB."
+    "file-size-error": "Il file supera il limite di 5 MB.",
+    "badge-no-expire": "Il codice QR non scade ed è illimitato",
+    "badge-suggestion": "Suggerimenti o richieste? Inviaci un messaggio",
+    "contact-title": "Invia messaggio",
+    "contact-label-email": "Il tuo indirizzo email",
+    "contact-label-message": "Messaggio o suggerimento",
+    "contact-placeholder-email": "esempio@mail.com",
+    "contact-placeholder-message": "Dicci come possiamo migliorare o quale funzionalità vorresti vedere...",
+    "contact-btn-send": "Invia",
+    "contact-sending": "Invio in corso...",
+    "contact-success": "Messaggio inviato con successo! Grazie per il tuo supporto.",
+    "contact-error-send": "Si è verificato un errore durante l'invio. Riprova."
   },
   pl: {
     "subtitle": "Profesjonalny Generator",
@@ -399,7 +465,18 @@ const translations = {
     "donate-footer-text": "Zostaniesz bezpiecznie przekierowany do PayPal.",
     "copied": "Skopiowano!",
     "copy-error": "Twoja przeglądarka nie obsługuje bezpośredniego kopiowania. Spróbuj pobrać plik PNG.",
-    "file-size-error": "Plik przekracza limit 5 MB."
+    "file-size-error": "Plik przekracza limit 5 MB.",
+    "badge-no-expire": "Kod QR nie wygasa i jest nieograniczony",
+    "badge-suggestion": "Masz sugestie lub życzenia? Wyślij nam wiadomość",
+    "contact-title": "Wyślij wiadomość",
+    "contact-label-email": "Twój adres e-mail",
+    "contact-label-message": "Wiadomość lub sugestia",
+    "contact-placeholder-email": "przyklad@mail.com",
+    "contact-placeholder-message": "Napisz, jak możemy ulepszyć serwis lub jaką funkcję chciałbyś zobaczyć...",
+    "contact-btn-send": "Wyślij",
+    "contact-sending": "Wysyłanie...",
+    "contact-success": "Wiadomość została wysłana! Dziękujemy za wsparcie.",
+    "contact-error-send": "Wystąpił błąd podczas wysyłania. Spróbuj ponownie."
   },
   pt: {
     "subtitle": "Gerador Profissional",
@@ -456,7 +533,18 @@ const translations = {
     "donate-footer-text": "Você será redirecionado ao PayPal com segurança.",
     "copied": "Copiado!",
     "copy-error": "Seu navegador não suporta a cópia direta. Tente baixar o PNG.",
-    "file-size-error": "O arquivo excede o limite de 5 MB."
+    "file-size-error": "O arquivo excede o limite de 5 MB.",
+    "badge-no-expire": "O código QR não expira e é ilimitado",
+    "badge-suggestion": "Sugestões ou solicitações? Envie-nos uma mensagem",
+    "contact-title": "Enviar mensagem",
+    "contact-label-email": "Seu endereço de e-mail",
+    "contact-label-message": "Mensagem ou sugestão",
+    "contact-placeholder-email": "exemplo@email.com",
+    "contact-placeholder-message": "Diga-nos como podemos melhorar ou qual funcionalidade você gostaria de ver...",
+    "contact-btn-send": "Enviar",
+    "contact-sending": "Enviando...",
+    "contact-success": "Mensagem enviada com sucesso! Obrigado pelo seu apoio.",
+    "contact-error-send": "Ocorreu um erro ao enviar. Por favor, tente novamente."
   },
   fr: {
     "subtitle": "Générateur Professionnel",
@@ -513,7 +601,18 @@ const translations = {
     "donate-footer-text": "Vous serez redirigé vers PayPal en toute sécurité.",
     "copied": "Copié !",
     "copy-error": "Votre navigateur ne prend pas en charge la copie directe. Essayez de télécharger le PNG.",
-    "file-size-error": "Le fichier dépasse la limite de 5 Mo."
+    "file-size-error": "Le fichier dépasse la limite de 5 Mo.",
+    "badge-no-expire": "Le code QR n'expire pas et est illimité",
+    "badge-suggestion": "Des suggestions ou des demandes ? Envoyez-nous un message",
+    "contact-title": "Envoyer un message",
+    "contact-label-email": "Votre adresse e-mail",
+    "contact-label-message": "Message ou suggestion",
+    "contact-placeholder-email": "exemple@mail.com",
+    "contact-placeholder-message": "Dites-nous comment nous pouvons nous améliorer ou quelle fonctionnalité vous aimeriez voir...",
+    "contact-btn-send": "Envoyer",
+    "contact-sending": "Envoi en cours...",
+    "contact-success": "Message envoyé avec succès ! Merci pour votre soutien.",
+    "contact-error-send": "Une erreur est survenue lors de l'envoi. Veuillez réessayer."
   },
   ja: {
     "subtitle": "プロフェッショナル生成器",
@@ -570,7 +669,18 @@ const translations = {
     "donate-footer-text": "安全にPayPalにリダイレクトされます。",
     "copied": "コピーしました！",
     "copy-error": "お使いのブラウザは直接コピーに対応していません。PNGをダウンロードしてください。",
-    "file-size-error": "ファイルサイズが5MBの上限を超えています。"
+    "file-size-error": "ファイルサイズが5MBの上限を超えています。",
+    "badge-no-expire": "QRコードの有効期限はなく、無制限です",
+    "badge-suggestion": "ご提案やご要望ですか？メッセージを送信",
+    "contact-title": "メッセージを送信",
+    "contact-label-email": "メールアドレス",
+    "contact-label-message": "メッセージまたは提案",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "改善点や追加してほしい機能について教えてください...",
+    "contact-btn-send": "送信",
+    "contact-sending": "送信中...",
+    "contact-success": "メッセージが送信されました！ご支援ありがとうございます。",
+    "contact-error-send": "送信中にエラーが発生しました。もう一度お試しください。"
   },
   ko: {
     "subtitle": "전문가용 생성기",
@@ -627,7 +737,18 @@ const translations = {
     "donate-footer-text": "PayPal로 안전하게 이동합니다.",
     "copied": "복사 완료!",
     "copy-error": "브라우저가 직접 복사를 지원하지 않습니다. PNG 다운로드를 시도하세요.",
-    "file-size-error": "파일 크기가 5MB 제한을 초과합니다."
+    "file-size-error": "파일 크기가 5MB 제한을 초과합니다.",
+    "badge-no-expire": "QR 코드는 만료되지 않으며 무제한입니다",
+    "badge-suggestion": "제안이나 요청이 있으신가요? 메시지 보내기",
+    "contact-title": "메시지 보내기",
+    "contact-label-email": "이메일 주소",
+    "contact-label-message": "메시지 또는 제안",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "개선할 점이나 추가되었으면 하는 기능에 대해 알려주세요...",
+    "contact-btn-send": "보내기",
+    "contact-sending": "전송 중...",
+    "contact-success": "메시지가 성공적으로 전송되었습니다! 지원해 주셔서 감사합니다.",
+    "contact-error-send": "전송 중 오류가 발생했습니다. 다시 시도해 주세요."
   },
   ar: {
     "subtitle": "مولد احترافي",
@@ -684,7 +805,18 @@ const translations = {
     "donate-footer-text": "سيتم توجيهك بأمان إلى PayPal.",
     "copied": "تم النسخ!",
     "copy-error": "متصفحك لا يدعم النسخ المباشر. يرجى تحميل صورة PNG.",
-    "file-size-error": "حجم الملف يتجاوز الحد المسموح به وهو 5 ميجابايت."
+    "file-size-error": "حجم الملف يتجاوز الحد المسموح به وهو 5 ميجابايت.",
+    "badge-no-expire": "رمز الـ QR لا تنتهي صلاحيته وغير محدود",
+    "badge-suggestion": "هل لديك اقتراحات أو طلبات؟ أرسل لنا رسالة",
+    "contact-title": "إرسال رسالة",
+    "contact-label-email": "بريدك الإلكتروني",
+    "contact-label-message": "الرسالة أو الاقتراح",
+    "contact-placeholder-email": "example@mail.com",
+    "contact-placeholder-message": "أدخل اقتراحك أو الرسالة التي ترغب في إرسالها...",
+    "contact-btn-send": "إرسال",
+    "contact-sending": "جاري الإرسال...",
+    "contact-success": "تم إرسال الرسالة بنجاح! شكراً لدعمك.",
+    "contact-error-send": "حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى."
   }
 };
 
@@ -1144,3 +1276,90 @@ donateCustomInput.addEventListener("input", () => {
         donateCustomInput.classList.remove("has-value");
     }
 });
+
+// ─── Contact Form Popup ───────────────────────────────────
+const contactOverlay = document.getElementById("contact-overlay");
+const contactTrigger = document.getElementById("contact-trigger");
+const contactClose = document.getElementById("contact-close");
+const contactForm = document.getElementById("contact-form");
+const contactSubmit = document.getElementById("contact-submit");
+const contactEmail = document.getElementById("contact-email");
+const contactMessage = document.getElementById("contact-message");
+const contactStatus = document.getElementById("contact-status");
+
+if (contactTrigger) {
+    contactTrigger.addEventListener("click", () => {
+        contactOverlay.classList.add("active");
+        if (contactStatus) {
+            contactStatus.className = "form-status";
+            contactStatus.style.display = "none";
+        }
+    });
+}
+
+if (contactClose) {
+    contactClose.addEventListener("click", () => {
+        contactOverlay.classList.remove("active");
+    });
+}
+
+if (contactOverlay) {
+    contactOverlay.addEventListener("click", (e) => {
+        if (e.target === contactOverlay) {
+            contactOverlay.classList.remove("active");
+        }
+    });
+}
+
+if (contactForm) {
+    contactForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const currentLang = document.getElementById("lang-select")?.value || detectLanguage();
+        
+        // Disable submit button and show loading text
+        contactSubmit.disabled = true;
+        const btnTextSpan = contactSubmit.querySelector("span");
+        const originalBtnText = btnTextSpan ? btnTextSpan.textContent : "Enviar";
+        if (btnTextSpan) btnTextSpan.textContent = translations[currentLang]["contact-sending"] || "Enviando...";
+        
+        try {
+            const emailVal = contactEmail.value;
+            const messageVal = contactMessage.value;
+            
+            const response = await fetch("https://formsubmit.co/ajax/Hyperion.hych@gmail.com", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    _subject: "QR Studio — Nueva sugerencia / solicitud",
+                    Email: emailVal,
+                    Message: messageVal
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success === "true") {
+                // Success
+                contactStatus.className = "form-status success";
+                contactStatus.textContent = translations[currentLang]["contact-success"] || "¡Mensaje enviado con éxito!";
+                contactForm.reset();
+                setTimeout(() => {
+                    contactOverlay.classList.remove("active");
+                }, 2500);
+            } else {
+                throw new Error("Failed to send");
+            }
+        } catch (err) {
+            console.error("Error al enviar mensaje:", err);
+            contactStatus.className = "form-status error";
+            contactStatus.textContent = translations[currentLang]["contact-error-send"] || "Ocurrió un error al enviar.";
+        } finally {
+            contactSubmit.disabled = false;
+            if (btnTextSpan) btnTextSpan.textContent = originalBtnText;
+        }
+    });
+}

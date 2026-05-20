@@ -262,6 +262,17 @@
 
         <!-- Preview Area -->
         <main class="preview-area">
+            <div class="info-badge">
+                <div class="info-badge-item">
+                    <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V12"></path><path d="M12 16H12.01"></path></svg>
+                    <span data-i18n="badge-no-expire">El código QR no caduca y es ilimitado</span>
+                </div>
+                <div class="info-badge-item clickable" id="contact-trigger">
+                    <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
+                    <span data-i18n="badge-suggestion">¿Sugerencias o solicitudes? Envíanos un mensaje</span>
+                </div>
+            </div>
+
             <div class="preview-card">
                 <div class="qr-wrapper">
                     <div id="qrcode" class="style-square"></div>
@@ -314,6 +325,31 @@
                 Donar con PayPal
             </a>
             <p class="donate-footer" data-i18n="donate-footer-text">Serás redirigido a PayPal de forma segura.</p>
+        </div>
+    </div>
+
+    <!-- Contact Popup -->
+    <div id="contact-overlay" class="contact-overlay">
+        <div class="contact-popup">
+            <button id="contact-close" class="contact-close">&times;</button>
+            <div class="contact-icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
+            </div>
+            <h2 data-i18n="contact-title">¿Sugerencias o solicitudes?</h2>
+            <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <label for="contact-email" data-i18n="contact-label-email">Tu correo electrónico</label>
+                    <input type="email" id="contact-email" required data-i18n-placeholder="contact-placeholder-email" placeholder="ejemplo@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="contact-message" data-i18n="contact-label-message">Mensaje</label>
+                    <textarea id="contact-message" required rows="4" data-i18n-placeholder="contact-placeholder-message" placeholder="Escribe tu sugerencia o solicitud aquí..."></textarea>
+                </div>
+                <button type="submit" id="contact-submit" class="btn-send">
+                    <span data-i18n="contact-btn-send">Enviar mensaje</span>
+                </button>
+                <div id="contact-status" class="form-status" style="display: none;"></div>
+            </form>
         </div>
     </div>
 
