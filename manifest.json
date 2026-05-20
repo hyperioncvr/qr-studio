@@ -1,0 +1,17 @@
+{
+  "name": "QR Studio — Generador Profesional",
+  "short_name": "QR Studio",
+  "description": "Crea códigos QR vectoriales con diseño profesional. Privacidad total, procesamiento local.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1e293b",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
