@@ -46,71 +46,82 @@
                     </svg>
                     <div>
                         <h1>QR Studio</h1>
-                        <p class="subtitle">Generador Profesional</p>
+                        <p class="subtitle" data-i18n="subtitle">Generador Profesional</p>
                     </div>
+                </div>
+                <div class="lang-selector">
+                    <select id="lang-select">
+                        <option value="es">ES</option>
+                        <option value="en">EN</option>
+                        <option value="zh">ZH</option>
+                        <option value="ru">RU</option>
+                        <option value="de">DE</option>
+                        <option value="it">IT</option>
+                        <option value="pl">PL</option>
+                    </select>
                 </div>
             </header>
 
             <nav class="tabs">
                 <button class="tab-btn active" data-tab="content">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18m9-9H3"/></svg>
-                    Contenido
+                    <span data-i18n="tab-content">Contenido</span>
                 </button>
                 <button class="tab-btn" data-tab="style">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.636-6.364l-1.414 1.414M6.05 17.95l-1.414 1.414m0-12.728l1.414 1.414m11.314 11.314l1.414 1.414"/></svg>
-                    Estilo
+                    <span data-i18n="tab-style">Estilo</span>
                 </button>
                 <button class="tab-btn" data-tab="logo">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                    Logo
+                    <span data-i18n="tab-logo">Logo</span>
                 </button>
             </nav>
 
             <!-- Tab Content: Content -->
             <div id="tab-content" class="control-section active">
                 <div class="input-group">
-                    <label for="url-input">URL o Texto</label>
-                    <input type="text" id="url-input" placeholder="https://tu-sitio.com" value="https://google.com">
+                    <label for="url-input" data-i18n="label-url">URL o Texto</label>
+                    <input type="text" id="url-input" data-i18n-placeholder="placeholder-url" placeholder="https://tu-sitio.com" value="https://google.com">
                 </div>
 
                 <div class="input-group">
-                    <label>Estilos Predefinidos</label>
+                    <label data-i18n="label-presets">Estilos Predefinidos</label>
                     <div class="presets-grid">
                         <button class="preset-btn" data-preset="corporate">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #1e293b, #334155);"></span>
-                            Corporativo
+                            <span data-i18n="preset-corporate">Corporativo</span>
                         </button>
                         <button class="preset-btn" data-preset="minimal">
                             <span class="preset-swatch" style="background: #111827;"></span>
-                            Minimal
+                            <span data-i18n="preset-minimal">Minimal</span>
                         </button>
                         <button class="preset-btn" data-preset="midnight">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #0f172a, #1e293b);"></span>
-                            Midnight
+                            <span data-i18n="preset-midnight">Midnight</span>
                         </button>
                         <button class="preset-btn" data-preset="sage">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #4ade80, #166534);"></span>
-                            Sage
+                            <span data-i18n="preset-sage">Sage</span>
                         </button>
                         <button class="preset-btn" data-preset="ocean">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #0ea5e9, #1d4ed8);"></span>
-                            Ocean
+                            <span data-i18n="preset-ocean">Ocean</span>
                         </button>
                         <button class="preset-btn" data-preset="rose">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></span>
-                            Rosé
+                            <span data-i18n="preset-rose">Rosé</span>
                         </button>
                         <button class="preset-btn" data-preset="sunset">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #f97316, #dc2626);"></span>
-                            Sunset
+                            <span data-i18n="preset-sunset">Sunset</span>
                         </button>
                         <button class="preset-btn" data-preset="slate">
                             <span class="preset-swatch" style="background: linear-gradient(135deg, #64748b, #475569);"></span>
-                            Slate
+                            <span data-i18n="preset-slate">Slate</span>
                         </button>
                         <button class="preset-btn" data-preset="noir">
                             <span class="preset-swatch" style="background: #ffffff; border: 1px solid #e2e8f0;"></span>
-                            Noir
+                            <span data-i18n="preset-noir">Noir</span>
                         </button>
                     </div>
                 </div>
@@ -119,17 +130,17 @@
             <!-- Tab Content: Style -->
             <div id="tab-style" class="control-section">
                 <div class="input-group">
-                    <label>Módulos</label>
+                    <label data-i18n="label-modules">Módulos</label>
                     <div class="color-grid">
                         <div class="input-group">
-                            <label class="label-sm">Color Principal</label>
+                            <label class="label-sm" data-i18n="label-main-color">Color Principal</label>
                             <div class="color-input-wrapper">
                                 <input type="color" id="dot-color" value="#1e293b">
                                 <span class="color-hex" id="dot-color-hex">#1e293b</span>
                             </div>
                         </div>
                         <div class="input-group">
-                            <label class="label-sm">Color Secundario</label>
+                            <label class="label-sm" data-i18n="label-secondary-color">Color Secundario</label>
                             <div class="color-input-wrapper">
                                 <input type="color" id="dot-color-2" value="#334155">
                                 <span class="color-hex" id="dot-color-2-hex">#334155</span>
@@ -138,28 +149,28 @@
                     </div>
                     <div class="select-row">
                         <div class="input-group">
-                            <label class="label-sm">Gradiente</label>
+                            <label class="label-sm" data-i18n="label-gradient">Gradiente</label>
                             <select id="dot-gradient-type">
-                                <option value="none">Ninguno</option>
-                                <option value="linear">Lineal</option>
-                                <option value="radial">Radial</option>
+                                <option value="none" data-i18n="grad-none">Ninguno</option>
+                                <option value="linear" data-i18n="grad-linear">Lineal</option>
+                                <option value="radial" data-i18n="grad-radial">Radial</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label class="label-sm">Forma</label>
+                            <label class="label-sm" data-i18n="label-shape">Forma</label>
                             <select id="dot-style">
-                                <option value="square">Cuadrado</option>
-                                <option value="dots">Puntos</option>
-                                <option value="rounded">Redondo</option>
-                                <option value="extra-rounded">Suave</option>
-                                <option value="classy">Elegante</option>
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dots" data-i18n="shape-dots">Puntos</option>
+                                <option value="rounded" data-i18n="shape-rounded">Redondo</option>
+                                <option value="extra-rounded" data-i18n="shape-extra-rounded">Suave</option>
+                                <option value="classy" data-i18n="shape-classy">Elegante</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Fondo</label>
+                    <label data-i18n="label-background">Fondo</label>
                     <div class="bg-controls">
                         <div class="color-input-wrapper">
                             <input type="color" id="bg-color" value="#ffffff">
@@ -167,40 +178,40 @@
                         </div>
                         <label class="checkbox-label">
                             <input type="checkbox" id="bg-transparent">
-                            <span>Transparente</span>
+                            <span data-i18n="label-transparent">Transparente</span>
                         </label>
                     </div>
                     <div class="file-upload">
                         <label for="bg-image-file">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                            <span>Imagen de fondo</span>
+                            <span data-i18n="label-bg-image">Imagen de fondo</span>
                         </label>
                         <input type="file" id="bg-image-file" accept="image/*">
                     </div>
                 </div>
 
                 <div class="input-group">
-                    <label>Esquinas</label>
+                    <label data-i18n="label-corners">Esquinas</label>
                     <div class="select-row">
                         <div class="input-group">
-                            <label class="label-sm">Marco</label>
+                            <label class="label-sm" data-i18n="label-frame">Marco</label>
                             <select id="corner-square-style">
-                                <option value="square">Cuadrado</option>
-                                <option value="dot">Punto</option>
-                                <option value="extra-rounded">Redondo</option>
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dot" data-i18n="shape-dots">Punto</option>
+                                <option value="extra-rounded" data-i18n="shape-rounded">Redondo</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label class="label-sm">Centro</label>
+                            <label class="label-sm" data-i18n="label-center">Centro</label>
                             <select id="corner-dot-style">
-                                <option value="square">Cuadrado</option>
-                                <option value="dot">Punto</option>
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dot" data-i18n="shape-dots">Punto</option>
                             </select>
                         </div>
                     </div>
                     <div class="color-input-wrapper">
                         <input type="color" id="corner-color" value="#1e293b">
-                        <span class="color-hex">Color esquinas</span>
+                        <span class="color-hex" data-i18n="label-corner-color">Color esquinas</span>
                     </div>
                 </div>
             </div>
@@ -208,13 +219,13 @@
             <!-- Tab Content: Logo -->
             <div id="tab-logo" class="control-section">
                 <div class="input-group">
-                    <label>Logo central</label>
+                    <label data-i18n="label-center-logo">Logo central</label>
                     <div class="file-upload">
                         <label for="logo-file" id="file-label">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
                             </svg>
-                            <span>Subir Logo</span>
+                            <span data-i18n="btn-upload-logo">Subir Logo</span>
                         </label>
                         <input type="file" id="logo-file" accept="image/*">
                     </div>
@@ -222,23 +233,23 @@
                 <div class="input-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="hide-logo-dots" checked>
-                        <span>Ocultar puntos detrás del logo</span>
+                        <span data-i18n="label-hide-dots">Ocultar puntos detrás del logo</span>
                     </label>
                 </div>
                 <div class="input-group">
-                    <label for="logo-size">Tamaño del logo: <span id="logo-size-val">0.4</span></label>
+                    <label for="logo-size"><span data-i18n="label-logo-size">Tamaño del logo: </span><span id="logo-size-val">0.4</span></label>
                     <input type="range" id="logo-size" value="0.4" step="0.05" min="0.1" max="0.5">
                 </div>
-                <button id="clear-logo" class="btn btn-outline">Quitar Logo</button>
+                <button id="clear-logo" class="btn btn-outline" data-i18n="btn-clear-logo">Quitar Logo</button>
             </div>
 
             <footer class="sidebar-footer">
-                <p><strong>Privacidad Total:</strong> Tus datos y archivos no salen de tu navegador.</p>
+                <p data-i18n="footer-privacy"><strong>Privacidad Total:</strong> Tus datos y archivos no salen de tu navegador.</p>
                 <div class="footer-credits">
                     <p>By <strong>Hypstudio</strong> — Christian Vergara</p>
                     <button id="donate-btn" class="btn-donate">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
-                        Apoyar con una donación
+                        <span data-i18n="btn-donate-text">Apoyar con una donación</span>
                     </button>
                 </div>
             </footer>
@@ -256,19 +267,19 @@
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                         </svg>
-                        Descargar SVG
+                        <span data-i18n="btn-download-svg">Descargar SVG</span>
                     </button>
                     <button id="download-png" class="btn btn-secondary">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
                         </svg>
-                        PNG
+                        <span data-i18n="btn-download-png">PNG</span>
                     </button>
                     <button id="copy-qr" class="btn btn-secondary">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
                         </svg>
-                        Copiar
+                        <span data-i18n="btn-copy-qr">Copiar</span>
                     </button>
                 </div>
             </div>
@@ -282,22 +293,22 @@
             <div class="donate-icon">
                 <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
             </div>
-            <h2>Apoya este proyecto</h2>
-            <p class="donate-desc">Si QR Studio te ha sido útil, considera apoyar su desarrollo con una donación voluntaria.</p>
+            <h2 data-i18n="donate-title">Apoya este proyecto</h2>
+            <p class="donate-desc" data-i18n="donate-description">Si QR Studio te ha sido útil, considera apoyar su desarrollo con una donación voluntaria.</p>
             <div class="donate-amounts">
                 <button class="donate-amount" data-amount="2">$2</button>
                 <button class="donate-amount" data-amount="5">$5</button>
                 <button class="donate-amount active" data-amount="10">$10</button>
                 <button class="donate-amount" data-amount="25">$25</button>
-                <button class="donate-amount" id="donate-other-btn">Otro</button>
+                <button class="donate-amount" id="donate-other-btn" data-i18n="donate-other">Otro</button>
             </div>
             <div class="donate-custom" id="donate-custom-wrap" style="display: none;">
-                <input type="number" id="donate-custom-input" min="1" placeholder="Escribe el monto en USD">
+                <input type="number" id="donate-custom-input" min="1" data-i18n-placeholder="donate-placeholder" placeholder="Escribe el monto en USD">
             </div>
-            <a id="donate-paypal" href="https://paypal.me/hyperionhych/10" target="_blank" rel="noopener" class="btn-paypal">
+            <a id="donate-paypal" href="https://paypal.me/hyperionhych/10" target="_blank" rel="noopener" class="btn-paypal" data-i18n="donate-btn-paypal">
                 Donar con PayPal
             </a>
-            <p class="donate-footer">Serás redirigido a PayPal de forma segura.</p>
+            <p class="donate-footer" data-i18n="donate-footer-text">Serás redirigido a PayPal de forma segura.</p>
         </div>
     </div>
 

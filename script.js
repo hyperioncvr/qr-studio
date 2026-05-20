@@ -1,5 +1,462 @@
 let qrCode;
 
+// ─── i18n Translations Dictionary ────────────────────────
+const translations = {
+  es: {
+    "subtitle": "Generador Profesional",
+    "tab-content": "Contenido",
+    "tab-style": "Estilo",
+    "tab-logo": "Logo",
+    "label-url": "URL o Texto",
+    "placeholder-url": "https://tu-sitio.com",
+    "label-presets": "Estilos Predefinidos",
+    "preset-corporate": "Corporativo",
+    "preset-minimal": "Minimal",
+    "preset-midnight": "Midnight",
+    "preset-sage": "Sage",
+    "preset-ocean": "Ocean",
+    "preset-rose": "Rosé",
+    "preset-sunset": "Sunset",
+    "preset-slate": "Slate",
+    "preset-noir": "Noir",
+    "label-modules": "Módulos",
+    "label-main-color": "Color Principal",
+    "label-secondary-color": "Color Secundario",
+    "label-gradient": "Gradiente",
+    "grad-none": "Ninguno",
+    "grad-linear": "Lineal",
+    "grad-radial": "Radial",
+    "label-shape": "Forma",
+    "shape-square": "Cuadrado",
+    "shape-dots": "Puntos",
+    "shape-rounded": "Redondo",
+    "shape-extra-rounded": "Suave",
+    "shape-classy": "Elegante",
+    "label-background": "Fondo",
+    "label-transparent": "Transparente",
+    "label-bg-image": "Imagen de fondo",
+    "label-corners": "Esquinas",
+    "label-frame": "Marco",
+    "label-center": "Centro",
+    "label-corner-color": "Color esquinas",
+    "label-center-logo": "Logo central",
+    "btn-upload-logo": "Subir Logo",
+    "label-hide-dots": "Ocultar puntos detrás del logo",
+    "label-logo-size": "Tamaño del logo: ",
+    "btn-clear-logo": "Quitar Logo",
+    "footer-privacy": "<strong>Privacidad Total:</strong> Tus datos y archivos no salen de tu navegador.",
+    "btn-donate-text": "Apoyar con una donación",
+    "btn-download-svg": "Descargar SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Copiar",
+    "donate-title": "Apoya este proyecto",
+    "donate-description": "Si QR Studio te ha sido útil, considera apoyar su desarrollo con una donación voluntaria.",
+    "donate-other": "Otro",
+    "donate-placeholder": "Escribe el monto en USD",
+    "donate-btn-paypal": "Donar con PayPal",
+    "donate-footer-text": "Serás redirigido a PayPal de forma segura.",
+    "copied": "¡Copiado!",
+    "copy-error": "Tu navegador no soporta la copia directa. Intenta descargar el PNG.",
+    "file-size-error": "El archivo excede el límite de 5 MB."
+  },
+  en: {
+    "subtitle": "Professional Generator",
+    "tab-content": "Content",
+    "tab-style": "Style",
+    "tab-logo": "Logo",
+    "label-url": "URL or Text",
+    "placeholder-url": "https://your-site.com",
+    "label-presets": "Preset Styles",
+    "preset-corporate": "Corporate",
+    "preset-minimal": "Minimal",
+    "preset-midnight": "Midnight",
+    "preset-sage": "Sage",
+    "preset-ocean": "Ocean",
+    "preset-rose": "Rosé",
+    "preset-sunset": "Sunset",
+    "preset-slate": "Slate",
+    "preset-noir": "Noir",
+    "label-modules": "Modules",
+    "label-main-color": "Main Color",
+    "label-secondary-color": "Secondary Color",
+    "label-gradient": "Gradient",
+    "grad-none": "None",
+    "grad-linear": "Linear",
+    "grad-radial": "Radial",
+    "label-shape": "Shape",
+    "shape-square": "Square",
+    "shape-dots": "Dots",
+    "shape-rounded": "Rounded",
+    "shape-extra-rounded": "Extra Rounded",
+    "shape-classy": "Classy",
+    "label-background": "Background",
+    "label-transparent": "Transparent",
+    "label-bg-image": "Background image",
+    "label-corners": "Corners",
+    "label-frame": "Frame",
+    "label-center": "Center",
+    "label-corner-color": "Corner Color",
+    "label-center-logo": "Central Logo",
+    "btn-upload-logo": "Upload Logo",
+    "label-hide-dots": "Hide dots behind logo",
+    "label-logo-size": "Logo size: ",
+    "btn-clear-logo": "Remove Logo",
+    "footer-privacy": "<strong>Total Privacy:</strong> Your data and files never leave your browser.",
+    "btn-donate-text": "Support with a donation",
+    "btn-download-svg": "Download SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Copy",
+    "donate-title": "Support this project",
+    "donate-description": "If QR Studio has been useful to you, please consider supporting its development with a voluntary donation.",
+    "donate-other": "Other",
+    "donate-placeholder": "Enter amount in USD",
+    "donate-btn-paypal": "Donate with PayPal",
+    "donate-footer-text": "You will be redirected securely to PayPal.",
+    "copied": "Copied!",
+    "copy-error": "Your browser does not support direct copying. Try downloading the PNG.",
+    "file-size-error": "The file exceeds the 5 MB limit."
+  },
+  zh: {
+    "subtitle": "专业生成器",
+    "tab-content": "内容",
+    "tab-style": "样式",
+    "tab-logo": "标志",
+    "label-url": "网址或文本",
+    "placeholder-url": "https://your-site.com",
+    "label-presets": "预设样式",
+    "preset-corporate": "商务",
+    "preset-minimal": "极简",
+    "preset-midnight": "午夜",
+    "preset-sage": "鼠尾草",
+    "preset-ocean": "海洋",
+    "preset-rose": "玫瑰",
+    "preset-sunset": "日落",
+    "preset-slate": "板岩",
+    "preset-noir": "黑白",
+    "label-modules": "模块",
+    "label-main-color": "主颜色",
+    "label-secondary-color": "副颜色",
+    "label-gradient": "渐变",
+    "grad-none": "无",
+    "grad-linear": "线性",
+    "grad-radial": "径向",
+    "label-shape": "形状",
+    "shape-square": "正方形",
+    "shape-dots": "圆点",
+    "shape-rounded": "圆角",
+    "shape-extra-rounded": "极圆",
+    "shape-classy": "优雅",
+    "label-background": "背景",
+    "label-transparent": "透明",
+    "label-bg-image": "背景图片",
+    "label-corners": "角落",
+    "label-frame": "边框",
+    "label-center": "中心",
+    "label-corner-color": "角颜色",
+    "label-center-logo": "中心标志",
+    "btn-upload-logo": "上传标志",
+    "label-hide-dots": "隐藏标志后面的点",
+    "label-logo-size": "标志大小: ",
+    "btn-clear-logo": "移除标志",
+    "footer-privacy": "<strong>绝对隐私:</strong> 您的数据和文件不会离开您的浏览器。",
+    "btn-donate-text": "支持捐赠",
+    "btn-download-svg": "下载 SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "复制",
+    "donate-title": "支持这个项目",
+    "donate-description": "如果 QR Studio 对您有用，请考虑通过自愿捐赠支持其开发。",
+    "donate-other": "其他",
+    "donate-placeholder": "输入美元金额",
+    "donate-btn-paypal": "用 PayPal 捐赠",
+    "donate-footer-text": "您将被安全地重定向到 PayPal。",
+    "copied": "已复制！",
+    "copy-error": "您的浏览器不支持直接复制。请尝试下载 PNG。",
+    "file-size-error": "文件超过 5 MB 限制。"
+  },
+  ru: {
+    "subtitle": "Профессиональный Генератор",
+    "tab-content": "Содержимое",
+    "tab-style": "Стиль",
+    "tab-logo": "Логотип",
+    "label-url": "URL или Текст",
+    "placeholder-url": "https://your-site.com",
+    "label-presets": "Готовые стили",
+    "preset-corporate": "Корпоративный",
+    "preset-minimal": "Минимал",
+    "preset-midnight": "Полночь",
+    "preset-sage": "Шалфей",
+    "preset-ocean": "Океан",
+    "preset-rose": "Розовый",
+    "preset-sunset": "Закат",
+    "preset-slate": "Грифель",
+    "preset-noir": "Нуар",
+    "label-modules": "Модули",
+    "label-main-color": "Основной Цвет",
+    "label-secondary-color": "Вторичный Цвет",
+    "label-gradient": "Градиент",
+    "grad-none": "Нет",
+    "grad-linear": "Линейный",
+    "grad-radial": "Радиальный",
+    "label-shape": "Форма",
+    "shape-square": "Квадрат",
+    "shape-dots": "Точки",
+    "shape-rounded": "Круглый",
+    "shape-extra-rounded": "Очень мягкий",
+    "shape-classy": "Стильный",
+    "label-background": "Фон",
+    "label-transparent": "Прозрачный",
+    "label-bg-image": "Фоновое изображение",
+    "label-corners": "Углы",
+    "label-frame": "Рамка",
+    "label-center": "Центр",
+    "label-corner-color": "Цвет углов",
+    "label-center-logo": "Центральный логотип",
+    "btn-upload-logo": "Загрузить логотип",
+    "label-hide-dots": "Скрыть точки за логотипом",
+    "label-logo-size": "Размер логотипа: ",
+    "btn-clear-logo": "Удалить логотип",
+    "footer-privacy": "<strong>Полная конфиденциальность:</strong> Ваши данные и файлы остаются на вашем устройстве.",
+    "btn-donate-text": "Поддержать донатом",
+    "btn-download-svg": "Скачать SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Копировать",
+    "donate-title": "Поддержите этот проект",
+    "donate-description": "Если QR Studio оказался полезен, вы можете поддержать его разработку добровольным донатом.",
+    "donate-other": "Другой",
+    "donate-placeholder": "Введите сумму в USD",
+    "donate-btn-paypal": "Пожертвовать через PayPal",
+    "donate-footer-text": "Вы будете безопасно перенаправлены на PayPal.",
+    "copied": "Скопировано!",
+    "copy-error": "Ваш браузер не поддерживает прямое копирование. Попробуйте скачать PNG.",
+    "file-size-error": "Файл превышает лимит 5 МБ."
+  },
+  de: {
+    "subtitle": "Professioneller Generator",
+    "tab-content": "Inhalt",
+    "tab-style": "Stil",
+    "tab-logo": "Logo",
+    "label-url": "URL oder Text",
+    "placeholder-url": "https://ihre-website.de",
+    "label-presets": "Vordefinierte Stile",
+    "preset-corporate": "Unternehmen",
+    "preset-minimal": "Minimal",
+    "preset-midnight": "Mitternacht",
+    "preset-sage": "Salbei",
+    "preset-ocean": "Ozean",
+    "preset-rose": "Rosé",
+    "preset-sunset": "Sonnenuntergang",
+    "preset-slate": "Schiefer",
+    "preset-noir": "Noir",
+    "label-modules": "Module",
+    "label-main-color": "Hauptfarbe",
+    "label-secondary-color": "Zweitfarbe",
+    "label-gradient": "Verlauf",
+    "grad-none": "Keiner",
+    "grad-linear": "Linear",
+    "grad-radial": "Radial",
+    "label-shape": "Form",
+    "shape-square": "Quadratisch",
+    "shape-dots": "Punkte",
+    "shape-rounded": "Abgerundet",
+    "shape-extra-rounded": "Extra Abgerundet",
+    "shape-classy": "Elegant",
+    "label-background": "Hintergrund",
+    "label-transparent": "Transparent",
+    "label-bg-image": "Hintergrundbild",
+    "label-corners": "Ecken",
+    "label-frame": "Rahmen",
+    "label-center": "Zentrum",
+    "label-corner-color": "Eckenfarbe",
+    "label-center-logo": "Mittiges Logo",
+    "btn-upload-logo": "Logo Hochladen",
+    "label-hide-dots": "Punkte hinter dem Logo ausblenden",
+    "label-logo-size": "Logogröße: ",
+    "btn-clear-logo": "Logo Entfernen",
+    "footer-privacy": "<strong>Volle Privatsphäre:</strong> Ihre Daten und Dateien verlassen niemals Ihren Browser.",
+    "btn-donate-text": "Mit einer Spende unterstützen",
+    "btn-download-svg": "SVG Herunterladen",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Kopieren",
+    "donate-title": "Dieses Projekt unterstützen",
+    "donate-description": "Wenn Ihnen QR Studio geholfen hat, unterstützen Sie die Entwicklung gerne mit einer freiwilligen Spende.",
+    "donate-other": "Andere",
+    "donate-placeholder": "Betrag in USD eingeben",
+    "donate-btn-paypal": "Mit PayPal spenden",
+    "donate-footer-text": "Sie werden sicher zu PayPal weitergeleitet.",
+    "copied": "Kopiert!",
+    "copy-error": "Ihr Browser unterstützt kein direktes Kopieren. Versuchen Sie, die PNG-Datei herunterzuladen.",
+    "file-size-error": "Die Datei überschreitet das Limit von 5 MB."
+  },
+  it: {
+    "subtitle": "Generatore Professionale",
+    "tab-content": "Contenuto",
+    "tab-style": "Stile",
+    "tab-logo": "Logo",
+    "label-url": "URL o Testo",
+    "placeholder-url": "https://il-tuo-sito.it",
+    "label-presets": "Stili Predefiniti",
+    "preset-corporate": "Aziendale",
+    "preset-minimal": "Minimale",
+    "preset-midnight": "Mezzanotte",
+    "preset-sage": "Salvia",
+    "preset-ocean": "Oceano",
+    "preset-rose": "Rosato",
+    "preset-sunset": "Tramonto",
+    "preset-slate": "Ardesia",
+    "preset-noir": "Noir",
+    "label-modules": "Moduli",
+    "label-main-color": "Colore Principale",
+    "label-secondary-color": "Colore Secondario",
+    "label-gradient": "Gradiente",
+    "grad-none": "Nessuno",
+    "grad-linear": "Lineare",
+    "grad-radial": "Radiale",
+    "label-shape": "Forma",
+    "shape-square": "Quadrato",
+    "shape-dots": "Punti",
+    "shape-rounded": "Arrotondato",
+    "shape-extra-rounded": "Molto Arrotondato",
+    "shape-classy": "Elegante",
+    "label-background": "Sfondo",
+    "label-transparent": "Trasparente",
+    "label-bg-image": "Immagine di sfondo",
+    "label-corners": "Angoli",
+    "label-frame": "Cornice",
+    "label-center": "Centro",
+    "label-corner-color": "Colore Angoli",
+    "label-center-logo": "Logo Centrale",
+    "btn-upload-logo": "Carica Logo",
+    "label-hide-dots": "Nascondi punti dietro il logo",
+    "label-logo-size": "Dimensione del logo: ",
+    "btn-clear-logo": "Rimuovi Logo",
+    "footer-privacy": "<strong>Privacy Totale:</strong> I tuoi dati e file non lasciano il tuo browser.",
+    "btn-donate-text": "Apoyar con una donación",
+    "btn-download-svg": "Scarica SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Copia",
+    "donate-title": "Supporta questo progetto",
+    "donate-description": "Se QR Studio ti è stato utile, considera di supportare il suo sviluppo con una donazione volontaria.",
+    "donate-other": "Altro",
+    "donate-placeholder": "Inserisci l'importo in USD",
+    "donate-btn-paypal": "Dona con PayPal",
+    "donate-footer-text": "Sarai reindirizzato a PayPal in modo sicuro.",
+    "copied": "Copiato!",
+    "copy-error": "Il tuo browser non supporta la copia directa. Prova a scaricare il PNG.",
+    "file-size-error": "Il file supera il limite di 5 MB."
+  },
+  pl: {
+    "subtitle": "Profesjonalny Generator",
+    "tab-content": "Zawartość",
+    "tab-style": "Styl",
+    "tab-logo": "Logo",
+    "label-url": "URL lub Tekst",
+    "placeholder-url": "https://twoja-strona.pl",
+    "label-presets": "Predefiniowane Style",
+    "preset-corporate": "Korporacyjny",
+    "preset-minimal": "Minimalistyczny",
+    "preset-midnight": "Północ",
+    "preset-sage": "Szałwia",
+    "preset-ocean": "Ocean",
+    "preset-rose": "Różowy",
+    "preset-sunset": "Zachód Słońca",
+    "preset-slate": "Łupek",
+    "preset-noir": "Noir",
+    "label-modules": "Moduły",
+    "label-main-color": "Główny Kolor",
+    "label-secondary-color": "Kolor Pomocniczy",
+    "label-gradient": "Gradient",
+    "grad-none": "Brak",
+    "grad-linear": "Liniowy",
+    "grad-radial": "Promieniowy",
+    "label-shape": "Kształt",
+    "shape-square": "Kwadrat",
+    "shape-dots": "Kropki",
+    "shape-rounded": "Zaokrąglony",
+    "shape-extra-rounded": "Super Zaokrąglony",
+    "shape-classy": "Elegancki",
+    "label-background": "Tło",
+    "label-transparent": "Przezroczysty",
+    "label-bg-image": "Obraz w tle",
+    "label-corners": "Rogi",
+    "label-frame": "Ramka",
+    "label-center": "Środek",
+    "label-corner-color": "Kolor Rogów",
+    "label-center-logo": "Logo Centralne",
+    "btn-upload-logo": "Prześlij Logo",
+    "label-hide-dots": "Ukryj kropki za logo",
+    "label-logo-size": "Rozmiar logo: ",
+    "btn-clear-logo": "Usuń Logo",
+    "footer-privacy": "<strong>Pełna Prywatność:</strong> Twoje dane i pliki nigdy nie opuszczają przeglądarki.",
+    "btn-donate-text": "Wesprzyj darowizną",
+    "btn-download-svg": "Pobierz SVG",
+    "btn-download-png": "PNG",
+    "btn-copy-qr": "Kopiuj",
+    "donate-title": "Wesprzyj ten projekt",
+    "donate-description": "Jeśli QR Studio było dla Ciebie przydatne, rozważ wsparcie jego rozwoju dobrowolną darowizną.",
+    "donate-other": "Inna",
+    "donate-placeholder": "Wpisz kwotę w USD",
+    "donate-btn-paypal": "Przekaż darowiznę przez PayPal",
+    "donate-footer-text": "Zostaniesz bezpiecznie przekierowany do PayPal.",
+    "copied": "Skopiowano!",
+    "copy-error": "Twoja przeglądarka nie obsługuje bezpośredniego kopiowania. Spróbuj pobrać plik PNG.",
+    "file-size-error": "Plik przekracza limit 5 MB."
+  }
+};
+
+// ─── i18n Logic ──────────────────────────────────────────
+const setLanguage = (lang) => {
+    if (!translations[lang]) return;
+    
+    // Save language setting
+    localStorage.setItem("qr_studio_lang", lang);
+    
+    // Update dropdown selection
+    const langSelect = document.getElementById("lang-select");
+    if (langSelect) langSelect.value = lang;
+
+    // Update simple text elements
+    document.querySelectorAll("[data-i18n]").forEach(elem => {
+        const key = elem.getAttribute("data-i18n");
+        if (translations[lang][key]) {
+            if (key === "footer-privacy") {
+                elem.innerHTML = translations[lang][key];
+            } else {
+                elem.textContent = translations[lang][key];
+            }
+        }
+    });
+
+    // Update placeholder elements
+    document.querySelectorAll("[data-i18n-placeholder]").forEach(elem => {
+        const key = elem.getAttribute("data-i18n-placeholder");
+        if (translations[lang][key]) {
+            elem.setAttribute("placeholder", translations[lang][key]);
+        }
+    });
+
+    // Re-trigger layout or values that are multi-language and calculated (like logo-size text template)
+    const logoSizeText = document.querySelector('label[for="logo-size"] span[data-i18n="label-logo-size"]');
+    if (logoSizeText) {
+        logoSizeText.textContent = translations[lang]["label-logo-size"];
+    }
+};
+
+const detectLanguage = () => {
+    // 1. LocalStorage
+    const savedLang = localStorage.getItem("qr_studio_lang");
+    if (savedLang && translations[savedLang]) return savedLang;
+
+    // 2. Browser Languages
+    const browserLangs = navigator.languages || [navigator.language];
+    for (const browserLang of browserLangs) {
+        const short = browserLang.split("-")[0].toLowerCase();
+        if (translations[short]) return short;
+    }
+
+    // 3. Default
+    return "en";
+};
+
 // Elements
 const qrElement = document.getElementById("qrcode");
 const urlInput = document.getElementById("url-input");
@@ -164,7 +621,8 @@ logoFileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-        alert("El archivo excede el límite de 5 MB.");
+        const currentLang = document.getElementById("lang-select")?.value || detectLanguage();
+        alert(translations[currentLang]["file-size-error"] || "El archivo excede el límite de 5 MB.");
         e.target.value = "";
         return;
     }
@@ -182,7 +640,8 @@ bgImageFileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-        alert("El archivo excede el límite de 5 MB.");
+        const currentLang = document.getElementById("lang-select")?.value || detectLanguage();
+        alert(translations[currentLang]["file-size-error"] || "El archivo excede el límite de 5 MB.");
         e.target.value = "";
         return;
     }
@@ -290,7 +749,9 @@ document.getElementById("download-png").addEventListener("click", () => qrCode.d
 // Copy to Clipboard
 document.getElementById("copy-qr").addEventListener("click", async () => {
     const btn = document.getElementById("copy-qr");
-    const originalText = btn.innerHTML;
+    const span = btn.querySelector("span");
+    const currentLang = document.getElementById("lang-select")?.value || detectLanguage();
+    const originalText = span ? span.textContent : "Copiar";
 
     try {
         // Get the canvas element from the QR library
@@ -300,26 +761,41 @@ document.getElementById("copy-qr").addEventListener("click", async () => {
             const data = [new ClipboardItem({ [blob.type]: blob })];
             await navigator.clipboard.write(data);
             
-            btn.innerHTML = "¡Copiado!";
+            if (span) {
+                span.textContent = translations[currentLang]["copied"] || "¡Copiado!";
+            }
             btn.classList.add("btn-primary");
             setTimeout(() => {
-                btn.innerHTML = originalText;
+                if (span) span.textContent = originalText;
                 btn.classList.remove("btn-primary");
             }, 2000);
         });
     } catch (err) {
         console.error("Error al copiar:", err);
-        alert("Tu navegador no soporta la copia directa. Intenta descargar el PNG.");
+        alert(translations[currentLang]["copy-error"] || "Tu navegador no soporta la copia directa. Intenta descargar el PNG.");
     }
 });
 
 window.onload = () => {
+    // Detect and set initial language
+    const initialLang = detectLanguage();
+    setLanguage(initialLang);
+
     updateQR();
+    
     // Register Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(console.error);
     }
 };
+
+// Bind language selector changes
+const langSelect = document.getElementById("lang-select");
+if (langSelect) {
+    langSelect.addEventListener("change", (e) => {
+        setLanguage(e.target.value);
+    });
+}
 
 // ─── Donation Popup ───────────────────────────────────────
 const donateOverlay = document.getElementById("donate-overlay");
