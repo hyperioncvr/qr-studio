@@ -820,6 +820,28 @@ const translations = {
   }
 };
 
+// Merge extra translations for presets show more/less
+const extraTranslations = {
+  es: { "presets-show-more": "Mostrar más", "presets-show-less": "Mostrar menos" },
+  en: { "presets-show-more": "Show more", "presets-show-less": "Show less" },
+  zh: { "presets-show-more": "显示更多", "presets-show-less": "收起" },
+  ru: { "presets-show-more": "Показать больше", "presets-show-less": "Свернуть" },
+  de: { "presets-show-more": "Mehr anzeigen", "presets-show-less": "Weniger anzeigen" },
+  it: { "presets-show-more": "Mostra altro", "presets-show-less": "Mostra meno" },
+  pl: { "presets-show-more": "Pokaż więcej", "presets-show-less": "Pokaż mniej" },
+  pt: { "presets-show-more": "Mostrar mais", "presets-show-less": "Mostrar menos" },
+  fr: { "presets-show-more": "Afficher plus", "presets-show-less": "Afficher moins" },
+  ja: { "presets-show-more": "もっと見る", "presets-show-less": "閉じる" },
+  ko: { "presets-show-more": "더 보기", "presets-show-less": "간략히 보기" },
+  ar: { "presets-show-more": "عرض المزيد", "presets-show-less": "عرض أقل" }
+};
+
+for (const lang in extraTranslations) {
+    if (translations[lang]) {
+        Object.assign(translations[lang], extraTranslations[lang]);
+    }
+}
+
 // ─── i18n Logic ──────────────────────────────────────────
 const setLanguage = (lang) => {
     if (!translations[lang]) return;
@@ -1374,6 +1396,9 @@ function handleResponsiveLayout() {
     const header = document.querySelector(".header");
     const infoBadge = document.querySelector(".info-badge");
     const previewCard = document.querySelector(".preview-card");
+    const presetsGroup = document.getElementById("presets-container-group");
+    const tabContent = document.getElementById("tab-content");
+    const urlInputGroup = tabContent ? tabContent.firstElementChild : null;
     
     if (isMobile) {
         // 1. Move header to the very top of app-container
@@ -1381,17 +1406,29 @@ function handleResponsiveLayout() {
             appContainer.insertBefore(header, appContainer.firstChild);
         }
         
-        // 2. Move preview-area below header (before sidebar)
+        // 2. Move info-badge below header
+        if (infoBadge && header && appContainer && header.nextElementSibling !== infoBadge) {
+            appContainer.insertBefore(infoBadge, header.nextSibling);
+        }
+        
+        // 3. Move presets-container-group below info-badge
+        const presetsAnchor = infoBadge || header;
+        if (presetsGroup && presetsAnchor && appContainer && presetsAnchor.nextElementSibling !== presetsGroup) {
+            appContainer.insertBefore(presetsGroup, presetsAnchor.nextSibling);
+        }
+        
+        // 4. Move preview-area below presets-container-group (before sidebar)
         if (previewArea && sidebar && appContainer && previewArea.nextElementSibling !== sidebar) {
             appContainer.insertBefore(previewArea, sidebar);
         }
         
-        // 3. Move info badges below the preview card
-        if (infoBadge && previewArea && previewArea.lastElementChild !== infoBadge) {
-            previewArea.appendChild(infoBadge);
+        // 5. Initialize minimized presets class
+        if (presetsGroup && !presetsGroup.classList.contains("minimized-presets") && !presetsGroup.dataset.toggled) {
+            presetsGroup.classList.add("minimized-presets");
+            presetsGroup.dataset.toggled = "true";
         }
         
-        // 4. Move footer to the bottom of app-container (below sidebar)
+        // 6. Move footer to the bottom of app-container (below sidebar)
         if (footer && appContainer && appContainer.lastElementChild !== footer) {
             appContainer.appendChild(footer);
         }
@@ -1401,21 +1438,56 @@ function handleResponsiveLayout() {
             sidebar.insertBefore(header, sidebar.firstChild);
         }
         
-        // 2. Move footer back to the bottom of sidebar
+        // 2. Move presetsGroup back to tab-content (second element, after urlInputGroup)
+        if (presetsGroup && tabContent && urlInputGroup && presetsGroup.parentElement !== tabContent) {
+            tabContent.insertBefore(presetsGroup, urlInputGroup.nextSibling);
+        }
+        
+        // 3. Move footer back to the bottom of sidebar
         if (footer && sidebar && sidebar.lastElementChild !== footer) {
             sidebar.appendChild(footer);
         }
         
-        // 3. Move preview-area back to be the last child of app-container (after sidebar)
+        // 4. Move preview-area back to be the last child of app-container (after sidebar)
         if (previewArea && appContainer && appContainer.lastElementChild !== previewArea) {
             appContainer.appendChild(previewArea);
         }
         
-        // 4. Move info badges back above the preview card
+        // 5. Move info badges back above the preview card in previewArea
         if (infoBadge && previewArea && previewCard && previewArea.firstElementChild !== infoBadge) {
             previewArea.insertBefore(infoBadge, previewCard);
         }
+        
+        // 6. Restore minimized presets state
+        if (presetsGroup) {
+            presetsGroup.classList.remove("minimized-presets");
+            delete presetsGroup.dataset.toggled;
+            
+            // Reset toggle button text to default "Mostrar más" if language is changed
+            const presetsToggleBtn = document.getElementById("presets-toggle-btn");
+            if (presetsToggleBtn) {
+                presetsToggleBtn.setAttribute("data-i18n", "presets-show-more");
+            }
+        }
     }
+}
+
+// Bind presets toggle click event
+const presetsToggleBtn = document.getElementById("presets-toggle-btn");
+if (presetsToggleBtn) {
+    presetsToggleBtn.addEventListener("click", () => {
+        const presetsGroup = document.getElementById("presets-container-group");
+        const currentLang = document.getElementById("lang-select")?.value || detectLanguage();
+        
+        if (presetsGroup) {
+            presetsGroup.classList.toggle("minimized-presets");
+            const isMinimized = presetsGroup.classList.contains("minimized-presets");
+            
+            // Update button text using i18n key
+            presetsToggleBtn.setAttribute("data-i18n", isMinimized ? "presets-show-more" : "presets-show-less");
+            presetsToggleBtn.textContent = translations[currentLang][isMinimized ? "presets-show-more" : "presets-show-less"];
+        }
+    });
 }
 
 // Bind layout helper events

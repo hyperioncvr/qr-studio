@@ -424,6 +424,10 @@ input[type="range"]::-webkit-slider-thumb {
   flex-shrink: 0;
 }
 
+.presets-toggle-btn {
+  display: none;
+}
+
 /* ── Sidebar Footer ── */
 .sidebar-footer {
   margin-top: auto;
@@ -823,7 +827,22 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .info-badge {
-    margin: 1.5rem auto 0 auto;
+    position: static;
+    margin: 1rem auto 0.5rem auto !important;
+    padding: 0 1.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+
+  .info-badge-item {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .sidebar-footer {
@@ -837,6 +856,50 @@ input[type="range"]::-webkit-slider-thumb {
   }
   .footer-credits {
     align-items: center;
+  }
+
+  /* Minimised Presets section styles for Mobile */
+  #presets-container-group {
+    background: var(--sidebar-bg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 1.75rem;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .presets-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .presets-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    margin-top: 0.75rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .presets-toggle-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--bg-white);
+  }
+
+  .minimized-presets .preset-btn:nth-child(n+4) {
+    display: none !important;
   }
 }
 
@@ -853,6 +916,14 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 1.25rem;
   }
 
+  #presets-container-group {
+    padding: 1.25rem;
+  }
+
+  .info-badge {
+    padding: 0 1.25rem;
+  }
+
   .sidebar-footer {
     padding: 1.5rem 1.25rem;
   }
@@ -863,6 +934,7 @@ input[type="range"]::-webkit-slider-thumb {
 
   .presets-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
   }
 
   .info-badge-item {
