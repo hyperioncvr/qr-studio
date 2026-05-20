@@ -289,10 +289,10 @@
                 <button class="donate-amount" data-amount="5">$5</button>
                 <button class="donate-amount active" data-amount="10">$10</button>
                 <button class="donate-amount" data-amount="25">$25</button>
+                <button class="donate-amount" id="donate-other-btn">Otro</button>
             </div>
-            <div class="donate-custom">
-                <label for="donate-custom-input">Otro monto (USD)</label>
-                <input type="number" id="donate-custom-input" min="1" placeholder="15">
+            <div class="donate-custom" id="donate-custom-wrap" style="display: none;">
+                <input type="number" id="donate-custom-input" min="1" placeholder="Escribe el monto en USD">
             </div>
             <a id="donate-paypal" href="https://paypal.me/hyperionhych/10" target="_blank" rel="noopener" class="btn-paypal">
                 Donar con PayPal

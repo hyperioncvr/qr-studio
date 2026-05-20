@@ -519,17 +519,17 @@ input[type="range"]::-webkit-slider-thumb {
 
 .donate-amounts {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
 }
 
 .donate-amount {
-  padding: 0.6rem 0.4rem;
+  padding: 0.6rem 0.3rem;
   border: 1px solid var(--border);
   background: var(--bg-white);
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;

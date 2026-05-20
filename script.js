@@ -350,20 +350,33 @@ donateOverlay.addEventListener("click", (e) => {
     }
 });
 
+const donateOtherBtn = document.getElementById("donate-other-btn");
+const donateCustomWrap = document.getElementById("donate-custom-wrap");
+
 donateAmountBtns.forEach(btn => {
     btn.addEventListener("click", () => {
         donateAmountBtns.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        donateCustomInput.value = "";
-        donateCustomInput.classList.remove("has-value");
-        updatePaypalLink(btn.dataset.amount);
+
+        if (btn === donateOtherBtn) {
+            // Show custom input and focus it
+            donateCustomWrap.style.display = "flex";
+            donateCustomInput.value = "";
+            donateCustomInput.classList.remove("has-value");
+            donateCustomInput.focus();
+        } else {
+            // Hide custom input and update amount
+            donateCustomWrap.style.display = "none";
+            donateCustomInput.value = "";
+            donateCustomInput.classList.remove("has-value");
+            updatePaypalLink(btn.dataset.amount);
+        }
     });
 });
 
 donateCustomInput.addEventListener("input", () => {
     const val = donateCustomInput.value;
     if (val && parseInt(val) > 0) {
-        donateAmountBtns.forEach(b => b.classList.remove("active"));
         donateCustomInput.classList.add("has-value");
         updatePaypalLink(parseInt(val));
     } else {
