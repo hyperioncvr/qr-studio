@@ -355,6 +355,7 @@ donateAmountBtns.forEach(btn => {
         donateAmountBtns.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         donateCustomInput.value = "";
+        donateCustomInput.classList.remove("has-value");
         updatePaypalLink(btn.dataset.amount);
     });
 });
@@ -363,6 +364,9 @@ donateCustomInput.addEventListener("input", () => {
     const val = donateCustomInput.value;
     if (val && parseInt(val) > 0) {
         donateAmountBtns.forEach(b => b.classList.remove("active"));
+        donateCustomInput.classList.add("has-value");
         updatePaypalLink(parseInt(val));
+    } else {
+        donateCustomInput.classList.remove("has-value");
     }
 });

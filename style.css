@@ -415,7 +415,7 @@ input[type="range"]::-webkit-slider-thumb {
   gap: 0.4rem;
   width: 100%;
   padding: 0.6rem 1rem;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: var(--accent);
   color: #ffffff;
   border: none;
   border-radius: var(--radius-sm);
@@ -428,9 +428,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .btn-donate:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
+  background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
 }
 
 .btn-donate svg {
@@ -501,7 +501,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .donate-icon {
-  color: #d97706;
+  color: var(--accent);
 }
 
 .donate-popup h2 {
@@ -537,15 +537,15 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .donate-amount:hover {
-  border-color: #d97706;
-  color: #d97706;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .donate-amount.active {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: var(--accent);
   color: #ffffff;
   border-color: transparent;
-  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.25);
 }
 
 .donate-custom {
@@ -569,8 +569,15 @@ input[type="range"]::-webkit-slider-thumb {
 
 .donate-custom input:focus {
   outline: none;
-  border-color: #d97706;
-  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.08);
+}
+
+.donate-custom input.has-value {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .btn-paypal {
@@ -579,7 +586,7 @@ input[type="range"]::-webkit-slider-thumb {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.8rem 1.5rem;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: var(--accent);
   color: #ffffff;
   border-radius: var(--radius-sm);
   font-family: inherit;
@@ -591,9 +598,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .btn-paypal:hover {
-  background: linear-gradient(135deg, #d97706, #b45309);
+  background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.35);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.25);
 }
 
 .donate-footer {
