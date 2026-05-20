@@ -1363,3 +1363,62 @@ if (contactForm) {
         }
     });
 }
+
+// ─── Responsive Layout Controller ──────────────────────────
+function handleResponsiveLayout() {
+    const isMobile = window.innerWidth <= 1024;
+    const sidebar = document.querySelector(".sidebar");
+    const footer = document.querySelector(".sidebar-footer");
+    const appContainer = document.querySelector(".app-container");
+    const previewArea = document.querySelector(".preview-area");
+    const header = document.querySelector(".header");
+    const infoBadge = document.querySelector(".info-badge");
+    const previewCard = document.querySelector(".preview-card");
+    
+    if (isMobile) {
+        // 1. Move header to the very top of app-container
+        if (header && appContainer && appContainer.firstElementChild !== header) {
+            appContainer.insertBefore(header, appContainer.firstChild);
+        }
+        
+        // 2. Move preview-area below header (before sidebar)
+        if (previewArea && sidebar && appContainer && previewArea.nextElementSibling !== sidebar) {
+            appContainer.insertBefore(previewArea, sidebar);
+        }
+        
+        // 3. Move info badges below the preview card
+        if (infoBadge && previewArea && previewArea.lastElementChild !== infoBadge) {
+            previewArea.appendChild(infoBadge);
+        }
+        
+        // 4. Move footer to the bottom of app-container (below sidebar)
+        if (footer && appContainer && appContainer.lastElementChild !== footer) {
+            appContainer.appendChild(footer);
+        }
+    } else {
+        // 1. Move header back to the top of sidebar
+        if (header && sidebar && sidebar.firstElementChild !== header) {
+            sidebar.insertBefore(header, sidebar.firstChild);
+        }
+        
+        // 2. Move footer back to the bottom of sidebar
+        if (footer && sidebar && sidebar.lastElementChild !== footer) {
+            sidebar.appendChild(footer);
+        }
+        
+        // 3. Move preview-area back to be the last child of app-container (after sidebar)
+        if (previewArea && appContainer && appContainer.lastElementChild !== previewArea) {
+            appContainer.appendChild(previewArea);
+        }
+        
+        // 4. Move info badges back above the preview card
+        if (infoBadge && previewArea && previewCard && previewArea.firstElementChild !== infoBadge) {
+            previewArea.insertBefore(infoBadge, previewCard);
+        }
+    }
+}
+
+// Bind layout helper events
+window.addEventListener("resize", handleResponsiveLayout);
+window.addEventListener("DOMContentLoaded", handleResponsiveLayout);
+handleResponsiveLayout();
