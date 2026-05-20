@@ -320,3 +320,49 @@ window.onload = () => {
         navigator.serviceWorker.register('./sw.js').catch(console.error);
     }
 };
+
+// ─── Donation Popup ───────────────────────────────────────
+const donateOverlay = document.getElementById("donate-overlay");
+const donateBtn = document.getElementById("donate-btn");
+const donateClose = document.getElementById("donate-close");
+const donateAmountBtns = document.querySelectorAll(".donate-amount");
+const donateCustomInput = document.getElementById("donate-custom-input");
+const donatePaypalLink = document.getElementById("donate-paypal");
+
+let selectedAmount = 10;
+
+const updatePaypalLink = (amount) => {
+    selectedAmount = amount;
+    donatePaypalLink.href = `https://paypal.me/hyperionhych/${amount}`;
+};
+
+donateBtn.addEventListener("click", () => {
+    donateOverlay.classList.add("active");
+});
+
+donateClose.addEventListener("click", () => {
+    donateOverlay.classList.remove("active");
+});
+
+donateOverlay.addEventListener("click", (e) => {
+    if (e.target === donateOverlay) {
+        donateOverlay.classList.remove("active");
+    }
+});
+
+donateAmountBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        donateAmountBtns.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        donateCustomInput.value = "";
+        updatePaypalLink(btn.dataset.amount);
+    });
+});
+
+donateCustomInput.addEventListener("input", () => {
+    const val = donateCustomInput.value;
+    if (val && parseInt(val) > 0) {
+        donateAmountBtns.forEach(b => b.classList.remove("active"));
+        updatePaypalLink(parseInt(val));
+    }
+});
