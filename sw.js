@@ -1,11 +1,24 @@
-const CACHE_NAME = 'qr-studio-v1.1';
+const CACHE_NAME = 'qr-studio-v1.2';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './script.js',
   './manifest.json',
+  './icon-192.png',
   './icon-512.png',
+  './locales/es.json',
+  './locales/en.json',
+  './locales/zh.json',
+  './locales/ru.json',
+  './locales/de.json',
+  './locales/it.json',
+  './locales/pl.json',
+  './locales/pt.json',
+  './locales/fr.json',
+  './locales/ja.json',
+  './locales/ko.json',
+  './locales/ar.json',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap',
   'https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js'
 ];

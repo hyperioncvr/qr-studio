@@ -807,26 +807,35 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media (max-width: 1024px) {
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    display: contents;
+  }
+
+  .preview-area {
+    display: contents;
+  }
+
   .header {
+    order: 1;
     padding: 1rem 1.75rem;
     background: var(--sidebar-bg);
     border-bottom: 1px solid var(--border);
     width: 100%;
     box-sizing: border-box;
-  }
-
-  .preview-area {
-    padding: 2.5rem 1.25rem;
-    min-height: auto;
-  }
-
-  .sidebar {
-    max-height: none;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
   }
 
   .info-badge {
+    order: 2;
     position: static;
     margin: 1rem auto 0.5rem auto !important;
     padding: 0 1.75rem;
@@ -845,21 +854,8 @@ input[type="range"]::-webkit-slider-thumb {
     box-sizing: border-box;
   }
 
-  .sidebar-footer {
-    border-top: 1px solid var(--border);
-    background: var(--sidebar-bg);
-    padding: 2rem 1.75rem;
-    margin: 0;
-    width: 100%;
-    text-align: center;
-    align-items: center;
-  }
-  .footer-credits {
-    align-items: center;
-  }
-
-  /* Minimised Presets section styles for Mobile */
   #presets-container-group {
+    order: 3;
     background: var(--sidebar-bg);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
@@ -867,6 +863,67 @@ input[type="range"]::-webkit-slider-thumb {
     margin: 0;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  .preview-card {
+    order: 4;
+    margin: 1rem auto 2rem auto;
+    width: 90%;
+    max-width: 420px;
+    box-sizing: border-box;
+  }
+
+  .tabs {
+    order: 5;
+    background: var(--sidebar-bg);
+    padding: 1.5rem 1.75rem 0.5rem 1.75rem;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* URL input when inside the active tab-content on mobile */
+  #tab-content.active {
+    display: contents;
+  }
+
+  #tab-content.active > .input-group:not(#presets-container-group) {
+    order: 6;
+    background: var(--sidebar-bg);
+    padding: 0.5rem 1.75rem 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Other control sections when active on mobile */
+  .control-section.active:not(#tab-content) {
+    order: 6;
+    display: flex;
+    background: var(--sidebar-bg);
+    padding: 0.5rem 1.75rem 1.5rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .sidebar-footer {
+    order: 7;
+    border-top: 1px solid var(--border);
+    background: var(--sidebar-bg);
+    padding: 2rem 1.75rem;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .footer-credits {
+    align-items: center;
   }
 
   .presets-grid {
@@ -904,16 +961,8 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 @media (max-width: 640px) {
-  .app-container {
-    grid-template-columns: 1fr;
-  }
-
   .header {
     padding: 0.85rem 1.25rem;
-  }
-
-  .sidebar {
-    padding: 1.25rem;
   }
 
   #presets-container-group {
@@ -922,6 +971,18 @@ input[type="range"]::-webkit-slider-thumb {
 
   .info-badge {
     padding: 0 1.25rem;
+  }
+
+  .tabs {
+    padding: 1rem 1.25rem 0.5rem 1.25rem;
+  }
+
+  #tab-content.active > .input-group:not(#presets-container-group) {
+    padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+  }
+
+  .control-section.active:not(#tab-content) {
+    padding: 0.5rem 1.25rem 1.25rem 1.25rem;
   }
 
   .sidebar-footer {
