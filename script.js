@@ -20,8 +20,9 @@ const setLanguage = async (lang) => {
     const langSelect = document.getElementById("lang-select");
     if (langSelect) langSelect.value = lang;
 
-    // Sync semantic html lang tag
+    // Sync semantic html lang tag and direction (RTL for Arabic)
     document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === "ar") ? "rtl" : "ltr";
 
     // Dynamically fetch translations if not loaded yet
     if (!activeTranslations[lang]) {
@@ -40,6 +41,27 @@ const setLanguage = async (lang) => {
     }
 
     const trans = activeTranslations[lang];
+
+    // Update dynamic header metadata for localized SEO
+    const pageTitle = `QR Studio — ${trans["subtitle"] || "Generador Profesional"}`;
+    document.title = pageTitle;
+
+    const ogTitleMeta = document.querySelector('meta[property="og:title"]');
+    if (ogTitleMeta) ogTitleMeta.setAttribute("content", pageTitle);
+
+    const twitterTitleMeta = document.querySelector('meta[property="twitter:title"]');
+    if (twitterTitleMeta) twitterTitleMeta.setAttribute("content", pageTitle);
+
+    if (trans["meta-description"]) {
+        const descMeta = document.querySelector('meta[name="description"]');
+        if (descMeta) descMeta.setAttribute("content", trans["meta-description"]);
+
+        const ogDescMeta = document.querySelector('meta[property="og:description"]');
+        if (ogDescMeta) ogDescMeta.setAttribute("content", trans["meta-description"]);
+
+        const twitterDescMeta = document.querySelector('meta[property="twitter:description"]');
+        if (twitterDescMeta) twitterDescMeta.setAttribute("content", trans["meta-description"]);
+    }
 
     // Update simple text elements
     document.querySelectorAll("[data-i18n]").forEach(elem => {
@@ -77,18 +99,26 @@ const setLanguage = async (lang) => {
 };
 
 const detectLanguage = () => {
-    // 1. LocalStorage
+    // 1. URL Query Parameter (highest priority for crawler-friendly multi-language indexing)
+    const urlParams = new URLSearchParams(window.location.search);
+    const langParam = urlParams.get("lang");
+    if (langParam && SUPPORTED_LANGUAGES.includes(langParam)) {
+        localStorage.setItem("qr_studio_lang", langParam);
+        return langParam;
+    }
+
+    // 2. LocalStorage
     const savedLang = localStorage.getItem("qr_studio_lang");
     if (savedLang && SUPPORTED_LANGUAGES.includes(savedLang)) return savedLang;
 
-    // 2. Browser Languages
+    // 3. Browser Languages
     const browserLangs = navigator.languages || [navigator.language];
     for (const browserLang of browserLangs) {
         const short = browserLang.split("-")[0].toLowerCase();
         if (SUPPORTED_LANGUAGES.includes(short)) return short;
     }
 
-    // 3. Default
+    // 4. Default
     return "en";
 };
 
