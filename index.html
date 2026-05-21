@@ -109,49 +109,6 @@
                     <label for="url-input" data-i18n="label-url">URL o Texto</label>
                     <input type="text" id="url-input" data-i18n-placeholder="placeholder-url" placeholder="https://tu-sitio.com" value="https://google.com">
                 </div>
-
-                <div class="input-group" id="presets-container-group">
-                    <label data-i18n="label-presets">Estilos Predefinidos</label>
-                    <div class="presets-grid">
-                        <button class="preset-btn" data-preset="corporate">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #1e293b, #334155);"></span>
-                            <span data-i18n="preset-corporate">Corporativo</span>
-                        </button>
-                        <button class="preset-btn" data-preset="minimal">
-                            <span class="preset-swatch" style="background: #111827;"></span>
-                            <span data-i18n="preset-minimal">Minimal</span>
-                        </button>
-                        <button class="preset-btn" data-preset="midnight">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #0f172a, #1e293b);"></span>
-                            <span data-i18n="preset-midnight">Midnight</span>
-                        </button>
-                        <button class="preset-btn" data-preset="sage">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #4ade80, #166534);"></span>
-                            <span data-i18n="preset-sage">Sage</span>
-                        </button>
-                        <button class="preset-btn" data-preset="ocean">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #0ea5e9, #1d4ed8);"></span>
-                            <span data-i18n="preset-ocean">Ocean</span>
-                        </button>
-                        <button class="preset-btn" data-preset="rose">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></span>
-                            <span data-i18n="preset-rose">Rosé</span>
-                        </button>
-                        <button class="preset-btn" data-preset="sunset">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #f97316, #dc2626);"></span>
-                            <span data-i18n="preset-sunset">Sunset</span>
-                        </button>
-                        <button class="preset-btn" data-preset="slate">
-                            <span class="preset-swatch" style="background: linear-gradient(135deg, #64748b, #475569);"></span>
-                            <span data-i18n="preset-slate">Slate</span>
-                        </button>
-                        <button class="preset-btn" data-preset="noir">
-                            <span class="preset-swatch" style="background: #ffffff; border: 1px solid #e2e8f0;"></span>
-                            <span data-i18n="preset-noir">Noir</span>
-                        </button>
-                    </div>
-                    <button type="button" id="presets-toggle-btn" class="presets-toggle-btn" data-i18n="presets-show-more">Mostrar más</button>
-                </div>
             </div>
 
             <!-- Tab Content: Style -->
@@ -268,6 +225,50 @@
                     <input type="range" id="logo-size" value="0.4" step="0.05" min="0.1" max="0.5">
                 </div>
                 <button id="clear-logo" class="btn btn-outline" data-i18n="btn-clear-logo">Quitar Logo</button>
+            </div>
+
+            <!-- Predefined Styles (Presets) - Extracted out of tab wrappers so it stays visible -->
+            <div class="input-group minimized-presets" id="presets-container-group">
+                <label data-i18n="label-presets">Estilos Predefinidos</label>
+                <div class="presets-grid">
+                    <button class="preset-btn" data-preset="corporate">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #1e293b, #334155);"></span>
+                        <span data-i18n="preset-corporate">Corporativo</span>
+                    </button>
+                    <button class="preset-btn" data-preset="minimal">
+                        <span class="preset-swatch" style="background: #111827;"></span>
+                        <span data-i18n="preset-minimal">Minimal</span>
+                    </button>
+                    <button class="preset-btn" data-preset="midnight">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #0f172a, #1e293b);"></span>
+                        <span data-i18n="preset-midnight">Midnight</span>
+                    </button>
+                    <button class="preset-btn" data-preset="sage">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #4ade80, #166534);"></span>
+                        <span data-i18n="preset-sage">Sage</span>
+                    </button>
+                    <button class="preset-btn" data-preset="ocean">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #0ea5e9, #1d4ed8);"></span>
+                        <span data-i18n="preset-ocean">Ocean</span>
+                    </button>
+                    <button class="preset-btn" data-preset="rose">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #fb7185, #e11d48);"></span>
+                        <span data-i18n="preset-rose">Rosé</span>
+                    </button>
+                    <button class="preset-btn" data-preset="sunset">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #f97316, #dc2626);"></span>
+                        <span data-i18n="preset-sunset">Sunset</span>
+                    </button>
+                    <button class="preset-btn" data-preset="slate">
+                        <span class="preset-swatch" style="background: linear-gradient(135deg, #64748b, #475569);"></span>
+                        <span data-i18n="preset-slate">Slate</span>
+                    </button>
+                    <button class="preset-btn" data-preset="noir">
+                        <span class="preset-swatch" style="background: #ffffff; border: 1px solid #e2e8f0;"></span>
+                        <span data-i18n="preset-noir">Noir</span>
+                    </button>
+                </div>
+                <button type="button" id="presets-toggle-btn" class="presets-toggle-btn" data-i18n="presets-show-more">Mostrar más</button>
             </div>
 
             <footer class="sidebar-footer">

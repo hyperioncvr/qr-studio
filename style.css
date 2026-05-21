@@ -425,7 +425,31 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .presets-toggle-btn {
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  margin-top: 0.75rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.presets-toggle-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--bg-white);
+}
+
+.minimized-presets .preset-btn:nth-child(n+4) {
+  display: none !important;
 }
 
 /* ── Sidebar Footer ── */
@@ -1046,7 +1070,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .info-badge {
-    order: 2;
+    order: 6;
     position: static;
     margin: 1rem auto 0.5rem auto !important;
     padding: 0 1.75rem;
@@ -1066,9 +1090,8 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   #presets-container-group {
-    order: 3;
+    order: 4;
     background: var(--sidebar-bg);
-    border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     padding: 1.5rem 1.75rem;
     margin: 0;
@@ -1077,7 +1100,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .preview-card {
-    order: 4;
+    order: 5;
     margin: 1rem auto 2rem auto;
     width: 90%;
     max-width: 420px;
@@ -1085,7 +1108,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .tabs {
-    order: 5;
+    order: 2;
     background: var(--sidebar-bg);
     padding: 1.5rem 1.75rem 0.5rem 1.75rem;
     border-top: 1px solid var(--border);
@@ -1102,7 +1125,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   #tab-content.active > .input-group:not(#presets-container-group) {
-    order: 6;
+    order: 3;
     background: var(--sidebar-bg);
     padding: 0.5rem 1.75rem 1.5rem 1.75rem;
     border-bottom: 1px solid var(--border);
@@ -1112,7 +1135,7 @@ input[type="range"]::-webkit-slider-thumb {
 
   /* Other control sections when active on mobile */
   .control-section.active:not(#tab-content) {
-    order: 6;
+    order: 3;
     display: flex;
     background: var(--sidebar-bg);
     padding: 0.5rem 1.75rem 1.5rem 1.75rem;
@@ -1140,34 +1163,6 @@ input[type="range"]::-webkit-slider-thumb {
   .presets-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
-  }
-
-  .presets-toggle-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 0.625rem 1rem;
-    margin-top: 0.75rem;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text-secondary);
-    font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition);
-  }
-
-  .presets-toggle-btn:hover {
-    border-color: var(--accent);
-    color: var(--text);
-    background: var(--bg-white);
-  }
-
-  .minimized-presets .preset-btn:nth-child(n+4) {
-    display: none !important;
   }
 }
 
