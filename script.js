@@ -1078,6 +1078,7 @@ if (contactForm) {
             
             if (response.ok && data.success === "true") {
                 contactStatus.className = "form-status success";
+                contactStatus.style.display = "block";
                 contactStatus.textContent = t("contact-success") || "¡Mensaje enviado con éxito!";
                 contactForm.reset();
                 setTimeout(() => {
@@ -1089,6 +1090,7 @@ if (contactForm) {
         } catch (err) {
             console.error("Error al enviar mensaje:", err);
             contactStatus.className = "form-status error";
+            contactStatus.style.display = "block";
             contactStatus.textContent = t("contact-error-send") || "Ocurrió un error al enviar.";
         } finally {
             contactSubmit.disabled = false;
