@@ -1,7 +1,7 @@
 let qrCode;
 
 // ─── i18n State & Dynamic Loading ──────────────────────────
-const SUPPORTED_LANGUAGES = ["es", "en", "zh", "ru", "de", "it", "pl", "pt", "fr", "ja", "ko", "ar"];
+const SUPPORTED_LANGUAGES = ["es", "en", "zh", "ar", "ru", "de", "it", "pl", "pt", "fr", "ja", "ko"];
 const activeTranslations = {};
 
 // Translation helper to get keys synchronously from loaded language
@@ -96,6 +96,9 @@ const setLanguage = async (lang) => {
         const isMinimized = presetsGroup.classList.contains("minimized-presets");
         presetsToggleBtn.textContent = trans[isMinimized ? "presets-show-more" : "presets-show-less"];
     }
+
+    // Update scan instructions / history texts
+    renderHistory();
 };
 
 const detectLanguage = () => {
@@ -167,12 +170,53 @@ const sections = document.querySelectorAll('.control-section');
 
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
+        // Stop camera if leaving Scanner tab
+        if (scanActive && tab.dataset.tab !== 'scan') {
+            stopCamera();
+        }
+
         tabs.forEach(t => t.classList.remove('active'));
         sections.forEach(s => s.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
     });
 });
+
+// Compiled QR Data Builder
+const getCompiledQRData = () => {
+    const typeSelect = document.getElementById("content-type-select");
+    const type = typeSelect ? typeSelect.value : "url";
+
+    if (type === "url") {
+        return urlInput.value || " ";
+    } else if (type === "wifi") {
+        const ssid = document.getElementById("wifi-ssid").value || "";
+        const pass = document.getElementById("wifi-pass").value || "";
+        const sec = document.getElementById("wifi-security").value || "nopass";
+        return `WIFI:S:${ssid};T:${sec};P:${pass};;`;
+    } else if (type === "vcard") {
+        const fn = document.getElementById("vcard-fn").value || "";
+        const ln = document.getElementById("vcard-ln").value || "";
+        const phone = document.getElementById("vcard-phone").value || "";
+        const email = document.getElementById("vcard-email").value || "";
+        const org = document.getElementById("vcard-org").value || "";
+        const url = document.getElementById("vcard-url").value || "";
+        return `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn};;;\nFN:${fn} ${ln}\nTEL;TYPE=CELL:${phone}\nEMAIL:${email}\nORG:${org}\nURL:${url}\nEND:VCARD`;
+    } else if (type === "email") {
+        const to = document.getElementById("email-to").value || "";
+        const subject = document.getElementById("email-subject").value || "";
+        const body = document.getElementById("email-body").value || "";
+        return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    } else if (type === "sms") {
+        const phone = document.getElementById("sms-phone").value || "";
+        const msg = document.getElementById("sms-message").value || "";
+        return `SMSTO:${phone}:${msg}`;
+    } else if (type === "phone") {
+        const num = document.getElementById("phone-number").value || "";
+        return `tel:${num}`;
+    }
+    return " ";
+};
 
 // Update hex displays
 const updateHexDisplays = () => {
@@ -220,7 +264,7 @@ const updateQR = () => {
         width: 300,
         height: 300,
         type: "canvas",
-        data: urlInput.value || " ",
+        data: getCompiledQRData() || " ",
         dotsOptions: dotsOptions,
         backgroundOptions: backgroundOptions,
         cornersSquareOptions: {
@@ -405,9 +449,59 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     input.addEventListener("input", updateQR);
 });
 
-// Downloads
-document.getElementById("download-svg").addEventListener("click", () => qrCode.download({ name: "qr", extension: "svg" }));
-document.getElementById("download-png").addEventListener("click", () => qrCode.download({ name: "qr", extension: "png" }));
+// Content Type Dropdown toggle logic
+const contentTypeSelect = document.getElementById("content-type-select");
+if (contentTypeSelect) {
+    contentTypeSelect.addEventListener("change", (e) => {
+        const type = e.target.value;
+        document.querySelectorAll(".content-subform").forEach(subform => {
+            subform.style.display = "none";
+        });
+        const activeSubform = document.getElementById(`form-${type}`);
+        if (activeSubform) {
+            activeSubform.style.display = "block";
+        }
+        updateQR();
+    });
+}
+
+// Bind all specialized inputs to debounced updates
+const specializedInputs = [
+    "wifi-ssid", "wifi-pass", "wifi-security",
+    "vcard-fn", "vcard-ln", "vcard-phone", "vcard-email", "vcard-org", "vcard-url",
+    "email-to", "email-subject", "email-body",
+    "sms-phone", "sms-message",
+    "phone-number"
+];
+specializedInputs.forEach(id => {
+    const input = document.getElementById(id);
+    if (input) {
+        if (input.tagName === "SELECT") {
+            input.addEventListener("change", updateQR);
+        } else {
+            input.addEventListener("input", debouncedUpdate);
+        }
+    }
+});
+
+// Resolution & Download logic
+const getDownloadOptions = (ext) => {
+    const resSelect = document.getElementById("download-resolution");
+    const res = resSelect ? parseInt(resSelect.value) : 600;
+    
+    // Auto-save current config to history
+    saveToHistory(false);
+
+    return {
+        name: "qr",
+        extension: ext,
+        width: res,
+        height: res
+    };
+};
+
+document.getElementById("download-svg").addEventListener("click", () => qrCode.download(getDownloadOptions("svg")));
+document.getElementById("download-png").addEventListener("click", () => qrCode.download(getDownloadOptions("png")));
 
 // Copy to Clipboard
 document.getElementById("copy-qr").addEventListener("click", async () => {
@@ -438,12 +532,399 @@ document.getElementById("copy-qr").addEventListener("click", async () => {
     }
 });
 
+// ─── Scanner (Camera and Image File Upload) ─────────────────
+let scanStream = null;
+let scanActive = false;
+const scanVideo = document.getElementById("scan-video");
+const scanCanvas = document.getElementById("scan-canvas");
+const scanOverlay = document.getElementById("scanner-overlay");
+const scanCameraBtn = document.getElementById("scan-camera-btn");
+const scanFileInput = document.getElementById("scan-file-input");
+const scanStatus = document.getElementById("scan-status");
+const scanResultWrapper = document.getElementById("scan-result-wrapper");
+const scanResult = document.getElementById("scan-result");
+const scanCopyBtn = document.getElementById("scan-copy-btn");
+const scanImportBtn = document.getElementById("scan-import-btn");
+
+const toggleCamera = async () => {
+    if (scanActive) {
+        stopCamera();
+    } else {
+        await startCamera();
+    }
+};
+
+const startCamera = async () => {
+    try {
+        scanStatus.style.display = "none";
+        scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        scanVideo.srcObject = scanStream;
+        scanVideo.setAttribute("playsinline", true); 
+        scanVideo.play();
+        scanActive = true;
+        scanCameraBtn.textContent = t("scan-stop-camera") || "Detener Cámara";
+        scanCameraBtn.classList.remove("btn-primary");
+        scanCameraBtn.classList.add("btn-secondary");
+        scanOverlay.style.display = "block";
+        requestAnimationFrame(tickScan);
+    } catch (err) {
+        console.error("Camera error:", err);
+        scanStatus.textContent = "Error al acceder a la cámara. Revisa los permisos.";
+        scanStatus.style.display = "block";
+        scanStatus.className = "scan-status error";
+    }
+};
+
+const stopCamera = () => {
+    if (scanStream) {
+        scanStream.getTracks().forEach(track => track.stop());
+        scanStream = null;
+    }
+    scanVideo.srcObject = null;
+    scanActive = false;
+    scanCameraBtn.textContent = t("scan-start-camera") || "Iniciar Cámara";
+    scanCameraBtn.classList.remove("btn-secondary");
+    scanCameraBtn.classList.add("btn-primary");
+    scanOverlay.style.display = "none";
+};
+
+const tickScan = () => {
+    if (scanVideo.readyState === scanVideo.HAVE_ENOUGH_DATA && scanActive) {
+        const ctx = scanCanvas.getContext("2d", { willReadFrequently: true });
+        scanCanvas.width = scanVideo.videoWidth;
+        scanCanvas.height = scanVideo.videoHeight;
+        ctx.drawImage(scanVideo, 0, 0, scanCanvas.width, scanCanvas.height);
+        const imageData = ctx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height, {
+            inversionAttempts: "dontInvert",
+        });
+        if (code) {
+            handleScanResult(code.data);
+            stopCamera();
+            return;
+        }
+    }
+    if (scanActive) {
+        requestAnimationFrame(tickScan);
+    }
+};
+
+const handleScanResult = (data) => {
+    scanResult.value = data;
+    scanResultWrapper.style.display = "flex";
+    scanStatus.textContent = t("scan-success-msg") || "¡Código QR detectado con éxito!";
+    scanStatus.style.display = "block";
+    scanStatus.className = "scan-status success";
+    
+    // Smooth scroll to result
+    scanResultWrapper.scrollIntoView({ behavior: 'smooth' });
+};
+
+if (scanCameraBtn) {
+    scanCameraBtn.addEventListener("click", toggleCamera);
+}
+
+if (scanFileInput) {
+    scanFileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const ctx = scanCanvas.getContext("2d", { willReadFrequently: true });
+                scanCanvas.width = img.width;
+                scanCanvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, scanCanvas.width, scanCanvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+                if (code) {
+                    handleScanResult(code.data);
+                } else {
+                    scanStatus.textContent = "No se detectó ningún código QR en la imagen.";
+                    scanStatus.style.display = "block";
+                    scanStatus.className = "scan-status error";
+                    scanResultWrapper.style.display = "none";
+                }
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+if (scanCopyBtn) {
+    scanCopyBtn.addEventListener("click", async () => {
+        try {
+            await navigator.clipboard.writeText(scanResult.value);
+            const span = scanCopyBtn.querySelector("span");
+            const originalText = span.textContent;
+            span.textContent = t("copied") || "¡Copiado!";
+            scanCopyBtn.classList.add("btn-primary");
+            setTimeout(() => {
+                span.textContent = originalText;
+                scanCopyBtn.classList.remove("btn-primary");
+            }, 2000);
+        } catch (err) {
+            console.error(err);
+        }
+    });
+}
+
+if (scanImportBtn) {
+    scanImportBtn.addEventListener("click", () => {
+        const contentTypeSelect = document.getElementById("content-type-select");
+        if (contentTypeSelect) {
+            contentTypeSelect.value = "url";
+            document.querySelectorAll(".content-subform").forEach(subform => {
+                subform.style.display = "none";
+            });
+            const activeSubform = document.getElementById("form-url");
+            if (activeSubform) {
+                activeSubform.style.display = "block";
+            }
+        }
+        urlInput.value = scanResult.value;
+        
+        // Switch tab back to content
+        tabs.forEach(t => t.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        
+        const contentTab = document.querySelector('.tab-btn[data-tab="content"]');
+        if (contentTab) contentTab.classList.add('active');
+        
+        const contentSection = document.getElementById('tab-content');
+        if (contentSection) contentSection.classList.add('active');
+        
+        updateQR();
+        alert("Texto importado al editor de contenido.");
+    });
+}
+
+// ─── LocalStorage Creation History ─────────────────────────
+const saveToHistory = (manual = false) => {
+    const typeSelect = document.getElementById("content-type-select");
+    const type = typeSelect ? typeSelect.value : "url";
+    const data = getCompiledQRData();
+    if (!data || data.trim() === "") return;
+
+    const config = {
+        id: Date.now(),
+        timestamp: new Date().toLocaleDateString(),
+        type: type,
+        data: data,
+        dotColor: dotColorInput.value,
+        dotColor2: dotColor2Input.value,
+        grad: dotGradientType.value,
+        style: dotStyleInput.value,
+        bg: bgColorInput.value,
+        trans: bgTransparentInput.checked,
+        cornerColor: cornerColorInput.value,
+        sq: cornerSquareStyle.value,
+        dt: cornerDotStyle.value,
+        logo: currentLogo,
+        logoSize: logoSizeInput.value,
+        hideDots: hideLogoDots.checked
+    };
+
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
+    } catch (e) {
+        history = [];
+    }
+
+    // Prevent duplicates in configuration details
+    const duplicate = history.find(item => item.data === config.data && item.dotColor === config.dotColor && item.bg === config.bg && item.logo === config.logo);
+    if (duplicate) return;
+
+    history.unshift(config);
+    if (history.length > 15) history.pop();
+
+    localStorage.setItem("qr_studio_history", JSON.stringify(history));
+    renderHistory();
+
+    if (manual) {
+        alert(t("history-saved-toast") || "¡Guardado en el historial!");
+    }
+};
+
+const renderHistory = () => {
+    const historyList = document.getElementById("history-list");
+    if (!historyList) return;
+
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
+    } catch (e) {
+        history = [];
+    }
+
+    if (history.length === 0) {
+        historyList.innerHTML = `<div class="history-empty" data-i18n="history-empty">${t("history-empty") || "No hay códigos QR guardados"}</div>`;
+        return;
+    }
+
+    historyList.innerHTML = history.map(item => {
+        let desc = item.data;
+        if (desc.startsWith("WIFI:")) {
+            const ssidMatch = desc.match(/S:([^;]+)/);
+            desc = `Wi-Fi: ${ssidMatch ? ssidMatch[1] : 'Network'}`;
+        } else if (desc.startsWith("BEGIN:VCARD")) {
+            const fnMatch = desc.match(/FN:([^\n\r]+)/);
+            desc = `Contacto: ${fnMatch ? fnMatch[1] : 'vCard'}`;
+        } else if (desc.startsWith("mailto:")) {
+            desc = `Email: ${desc.split('?')[0].replace('mailto:', '')}`;
+        } else if (desc.startsWith("tel:")) {
+            desc = `Tel: ${desc.replace('tel:', '')}`;
+        } else if (desc.length > 30) {
+            desc = desc.substring(0, 27) + "...";
+        }
+
+        return `
+            <div class="history-item" data-id="${item.id}">
+                <div class="history-swatch" style="background: ${item.trans ? 'transparent' : item.bg}; border: 1px solid ${item.dotColor}; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span class="history-swatch-dot" style="background: ${item.dotColor}; width: 8px; height: 8px; border-radius: 50%;"></span>
+                </div>
+                <div class="history-info" style="flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0;">
+                    <span class="history-title" style="font-size: 0.75rem; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${desc}</span>
+                    <span class="history-date" style="font-size: 0.6rem; color: var(--text-muted);">${item.timestamp}</span>
+                </div>
+                <div class="history-actions" style="display: flex; gap: 0.35rem; flex-shrink: 0;">
+                    <button type="button" class="history-btn-load" title="Cargar" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all var(--transition);">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6m16 10v-6h-6M21.9 8a10 10 0 00-19.18-2L1 10m22 4l-1.72 4a10 10 0 01-19.18-2"/></svg>
+                    </button>
+                    <button type="button" class="history-btn-del" title="Eliminar" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all var(--transition);">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Bind event actions
+    historyList.querySelectorAll(".history-item").forEach(elem => {
+        const id = parseInt(elem.dataset.id);
+        const item = history.find(x => x.id === id);
+        if (!item) return;
+
+        elem.querySelector(".history-btn-load").addEventListener("click", () => {
+            loadHistoryItem(item);
+        });
+
+        elem.querySelector(".history-btn-del").addEventListener("click", () => {
+            deleteHistoryItem(id);
+        });
+    });
+};
+
+const loadHistoryItem = (item) => {
+    const select = document.getElementById("content-type-select");
+    if (select) {
+        select.value = item.type;
+        document.querySelectorAll(".content-subform").forEach(subform => {
+            subform.style.display = "none";
+        });
+        const activeSubform = document.getElementById(`form-${item.type}`);
+        if (activeSubform) {
+            activeSubform.style.display = "block";
+        }
+    }
+
+    if (item.type === "url") {
+        urlInput.value = item.data;
+    } else if (item.type === "wifi") {
+        const ssidMatch = item.data.match(/S:([^;]+)/);
+        const passMatch = item.data.match(/P:([^;]+)/);
+        const secMatch = item.data.match(/T:([^;]+)/);
+        document.getElementById("wifi-ssid").value = ssidMatch ? ssidMatch[1] : "";
+        document.getElementById("wifi-pass").value = passMatch ? passMatch[1] : "";
+        document.getElementById("wifi-security").value = secMatch ? secMatch[1] : "WPA";
+    } else if (item.type === "vcard") {
+        const fnMatch = item.data.match(/FN:([^\n\r]+)/);
+        const nameParts = fnMatch ? fnMatch[1].split(' ') : ["", ""];
+        document.getElementById("vcard-fn").value = nameParts[0] || "";
+        document.getElementById("vcard-ln").value = nameParts[1] || "";
+        
+        const telMatch = item.data.match(/TEL;TYPE=CELL:([^\n\r]+)/);
+        document.getElementById("vcard-phone").value = telMatch ? telMatch[1] : "";
+        
+        const emailMatch = item.data.match(/EMAIL:([^\n\r]+)/);
+        document.getElementById("vcard-email").value = emailMatch ? emailMatch[1] : "";
+        
+        const orgMatch = item.data.match(/ORG:([^\n\r]+)/);
+        document.getElementById("vcard-org").value = orgMatch ? orgMatch[1] : "";
+        
+        const urlMatch = item.data.match(/URL:([^\n\r]+)/);
+        document.getElementById("vcard-url").value = urlMatch ? urlMatch[1] : "";
+    } else if (item.type === "email") {
+        const to = item.data.split('?')[0].replace('mailto:', '');
+        const subjectMatch = item.data.match(/subject=([^&]+)/);
+        const bodyMatch = item.data.match(/body=([^&]+)/);
+        document.getElementById("email-to").value = to;
+        document.getElementById("email-subject").value = subjectMatch ? decodeURIComponent(subjectMatch[1]) : "";
+        document.getElementById("email-body").value = bodyMatch ? decodeURIComponent(bodyMatch[1]) : "";
+    } else if (item.type === "sms") {
+        const parts = item.data.replace('SMSTO:', '').split(':');
+        document.getElementById("sms-phone").value = parts[0] || "";
+        document.getElementById("sms-message").value = parts.slice(1).join(':') || "";
+    } else if (item.type === "phone") {
+        document.getElementById("phone-number").value = item.data.replace('tel:', '');
+    }
+
+    dotColorInput.value = item.dotColor;
+    dotColor2Input.value = item.dotColor2;
+    dotGradientType.value = item.grad;
+    dotStyleInput.value = item.style;
+    bgColorInput.value = item.bg;
+    bgTransparentInput.checked = item.trans;
+    cornerColorInput.value = item.cornerColor;
+    cornerSquareStyle.value = item.sq;
+    cornerDotStyle.value = item.dt;
+    currentLogo = item.logo || "";
+    logoSizeInput.value = item.logoSize || "0.4";
+    hideLogoDots.checked = item.hideDots !== false;
+
+    if (currentLogo) {
+        fileLabel.querySelector('span').textContent = "Logo cargado";
+    } else {
+        fileLabel.querySelector('span').textContent = "Subir Logo";
+    }
+
+    updateQR();
+    alert("Diseño del historial cargado con éxito.");
+};
+
+const deleteHistoryItem = (id) => {
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
+    } catch (e) {
+        history = [];
+    }
+    history = history.filter(x => x.id !== id);
+    localStorage.setItem("qr_studio_history", JSON.stringify(history));
+    renderHistory();
+};
+
+const historyClearBtn = document.getElementById("history-clear-btn");
+if (historyClearBtn) {
+    historyClearBtn.addEventListener("click", () => {
+        if (confirm("¿Estás seguro de que quieres limpiar todo tu historial local?")) {
+            localStorage.removeItem("qr_studio_history");
+            renderHistory();
+        }
+    });
+}
+
+// ─── Window Load & Init ────────────────────────────────────
 window.onload = async () => {
     // Detect and set initial language
     const initialLang = detectLanguage();
     await setLanguage(initialLang);
 
     updateQR();
+    renderHistory();
     
     // Register Service Worker
     if ('serviceWorker' in navigator) {
@@ -474,19 +955,25 @@ const updatePaypalLink = (amount) => {
     donatePaypalLink.href = `https://paypal.me/hyperionhych/${amount}`;
 };
 
-donateBtn.addEventListener("click", () => {
-    donateOverlay.classList.add("active");
-});
+if (donateBtn) {
+    donateBtn.addEventListener("click", () => {
+        donateOverlay.classList.add("active");
+    });
+}
 
-donateClose.addEventListener("click", () => {
-    donateOverlay.classList.remove("active");
-});
-
-donateOverlay.addEventListener("click", (e) => {
-    if (e.target === donateOverlay) {
+if (donateClose) {
+    donateClose.addEventListener("click", () => {
         donateOverlay.classList.remove("active");
-    }
-});
+    });
+}
+
+if (donateOverlay) {
+    donateOverlay.addEventListener("click", (e) => {
+        if (e.target === donateOverlay) {
+            donateOverlay.classList.remove("active");
+        }
+    });
+}
 
 const donateOtherBtn = document.getElementById("donate-other-btn");
 const donateCustomWrap = document.getElementById("donate-custom-wrap");
@@ -497,13 +984,11 @@ donateAmountBtns.forEach(btn => {
         btn.classList.add("active");
 
         if (btn === donateOtherBtn) {
-            // Show custom input and focus it
             donateCustomWrap.style.display = "flex";
             donateCustomInput.value = "";
             donateCustomInput.classList.remove("has-value");
             donateCustomInput.focus();
         } else {
-            // Hide custom input and update amount
             donateCustomWrap.style.display = "none";
             donateCustomInput.value = "";
             donateCustomInput.classList.remove("has-value");
@@ -512,15 +997,17 @@ donateAmountBtns.forEach(btn => {
     });
 });
 
-donateCustomInput.addEventListener("input", () => {
-    const val = donateCustomInput.value;
-    if (val && parseInt(val) > 0) {
-        donateCustomInput.classList.add("has-value");
-        updatePaypalLink(parseInt(val));
-    } else {
-        donateCustomInput.classList.remove("has-value");
-    }
-});
+if (donateCustomInput) {
+    donateCustomInput.addEventListener("input", () => {
+        const val = donateCustomInput.value;
+        if (val && parseInt(val) > 0) {
+            donateCustomInput.classList.add("has-value");
+            updatePaypalLink(parseInt(val));
+        } else {
+            donateCustomInput.classList.remove("has-value");
+        }
+    });
+}
 
 // ─── Contact Form Popup ───────────────────────────────────
 const contactOverlay = document.getElementById("contact-overlay");
@@ -567,12 +1054,10 @@ if (contactForm) {
         if (btnTextSpan) btnTextSpan.textContent = t("contact-sending") || "Enviando...";
         
         try {
+            const nameVal = document.getElementById("contact-name").value;
             const emailVal = contactEmail.value;
             const messageVal = contactMessage.value;
             
-            // SUGERENCIA DE SEGURIDAD: Puedes registrarte en FormSubmit (https://formsubmit.co)
-            // y obtener un token/hash aleatorio (ej. "a38c4b2f...") para ocultar tu email en el cliente.
-            // Simplemente reemplaza el valor de esta constante con tu token o tu email.
             const FORMSUBMIT_RECEIVER = "Hyperion.hych@gmail.com";
             
             const response = await fetch(`https://formsubmit.co/ajax/${FORMSUBMIT_RECEIVER}`, {
@@ -583,6 +1068,7 @@ if (contactForm) {
                 },
                 body: JSON.stringify({
                     _subject: "QR Studio — Nueva sugerencia / solicitud",
+                    Nombre: nameVal,
                     Email: emailVal,
                     Message: messageVal
                 })
@@ -591,7 +1077,6 @@ if (contactForm) {
             const data = await response.json();
             
             if (response.ok && data.success === "true") {
-                // Success
                 contactStatus.className = "form-status success";
                 contactStatus.textContent = t("contact-success") || "¡Mensaje enviado con éxito!";
                 contactForm.reset();
@@ -621,7 +1106,6 @@ if (presetsToggleBtn) {
             presetsGroup.classList.toggle("minimized-presets");
             const isMinimized = presetsGroup.classList.contains("minimized-presets");
             
-            // Update button text using i18n key
             presetsToggleBtn.setAttribute("data-i18n", isMinimized ? "presets-show-more" : "presets-show-less");
             presetsToggleBtn.textContent = t(isMinimized ? "presets-show-more" : "presets-show-less");
         }

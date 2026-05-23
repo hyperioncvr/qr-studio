@@ -1235,3 +1235,196 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 0.5rem 0.25rem;
   }
 }
+
+/* ── Content Subforms ── */
+.content-subform {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.content-subform.active {
+  display: flex;
+}
+
+/* ── Scanner Viewport and Overlay ── */
+.scanner-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.scanner-camera-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000000;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+#scan-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-overlay {
+  position: absolute;
+  inset: 0;
+  border: 3px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Corner brackets for scanner visualization */
+.scanner-overlay::before,
+.scanner-overlay::after {
+  content: "";
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: #22c55e;
+  border-style: solid;
+  pointer-events: none;
+}
+
+/* Top-left corner */
+.scanner-overlay::before {
+  content: "";
+  top: 16px;
+  left: 16px;
+  border-width: 3px 0 0 3px;
+  border-top-left-radius: 4px;
+}
+
+/* Bottom-right corner */
+.scanner-overlay::after {
+  content: "";
+  bottom: 16px;
+  right: 16px;
+  border-width: 0 3px 3px 0;
+  border-bottom-right-radius: 4px;
+}
+
+/* Laser scan animation */
+.scanner-laser {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0) 0%, #22c55e 50%, rgba(34, 197, 94, 0) 100%);
+  animation: laserScan 2s infinite linear;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+@keyframes laserScan {
+  0% { top: 16px; opacity: 1; }
+  50% { top: calc(100% - 19px); opacity: 1; }
+  100% { top: 16px; opacity: 1; }
+}
+
+.scan-status {
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.scan-status.success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.scan-status.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* ── Creation History collapsible / items ── */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar for history */
+.history-list::-webkit-scrollbar {
+  width: 4px;
+}
+.history-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.history-list::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  animation: fadeIn 0.2s ease-out;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.history-item:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.history-swatch {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.history-swatch-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+
+.history-btn-load:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: var(--bg-white);
+}
+
+.history-btn-del:hover {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+  background: #fef2f2;
+}
+
+/* ── CSS Grid adjustments for vCard forms ── */
+#form-vcard .select-row {
+  margin-bottom: 0;
+}
+

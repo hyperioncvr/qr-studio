@@ -73,6 +73,9 @@
       src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"
       integrity="sha384-CHvehSuS0IW8Qj9IlAETJXbHf/SEi62VXMgODXi9p3CC3NUIuThj1Y0uAFnl30VB"
       crossorigin="anonymous"></script>
+    <script type="text/javascript"
+      src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"
+      crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="app-container">
@@ -124,13 +127,120 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                     <span data-i18n="tab-logo">Logo</span>
                 </button>
+                <button class="tab-btn" data-tab="scan">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2m-10 0H5a2 2 0 01-2-2v-2M7 12h10"/>
+                    </svg>
+                    <span data-i18n="tab-scan">Escáner</span>
+                </button>
             </nav>
 
             <!-- Tab Content: Content -->
             <div id="tab-content" class="control-section active">
                 <div class="input-group">
-                    <label for="url-input" data-i18n="label-url">URL o Texto</label>
-                    <input type="text" id="url-input" data-i18n-placeholder="placeholder-url" placeholder="https://tu-sitio.com" value="https://google.com">
+                    <label for="content-type-select" data-i18n="label-content-type">Tipo de Contenido</label>
+                    <select id="content-type-select">
+                        <option value="url" data-i18n="content-type-url" selected>URL o Texto</option>
+                        <option value="wifi" data-i18n="content-type-wifi">Red Wi-Fi</option>
+                        <option value="vcard" data-i18n="content-type-vcard">Contacto (vCard)</option>
+                        <option value="email" data-i18n="content-type-email">Correo Electrónico</option>
+                        <option value="sms" data-i18n="content-type-sms">Mensaje SMS</option>
+                        <option value="phone" data-i18n="content-type-phone">Número de Teléfono</option>
+                    </select>
+                </div>
+
+                <!-- URL/Texto Form -->
+                <div id="form-url" class="content-subform active">
+                    <div class="input-group">
+                        <label for="url-input" data-i18n="label-url">URL o Texto</label>
+                        <input type="text" id="url-input" data-i18n-placeholder="placeholder-url" placeholder="https://tu-sitio.com" value="https://google.com">
+                    </div>
+                </div>
+
+                <!-- Wi-Fi Form -->
+                <div id="form-wifi" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="wifi-ssid" data-i18n="label-wifi-ssid">Nombre de la Red (SSID)</label>
+                        <input type="text" id="wifi-ssid" placeholder="My Wi-Fi Network">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-pass" data-i18n="label-wifi-pass">Contraseña</label>
+                        <input type="text" id="wifi-pass" placeholder="••••••••">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-security" data-i18n="label-wifi-security">Seguridad</label>
+                        <select id="wifi-security">
+                            <option value="WPA" selected>WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass" data-i18n="grad-none">Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- vCard Form -->
+                <div id="form-vcard" class="content-subform" style="display: none;">
+                    <div class="select-row">
+                        <div class="input-group">
+                            <label for="vcard-fn" data-i18n="label-vcard-fn">Nombre</label>
+                            <input type="text" id="vcard-fn" placeholder="Juan">
+                        </div>
+                        <div class="input-group">
+                            <label for="vcard-ln" data-i18n="label-vcard-ln">Apellido</label>
+                            <input type="text" id="vcard-ln" placeholder="Pérez">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-phone" data-i18n="label-vcard-phone">Teléfono</label>
+                        <input type="text" id="vcard-phone" placeholder="+123456789">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-email" data-i18n="label-vcard-email">Correo</label>
+                        <input type="text" id="vcard-email" placeholder="juan@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-org" data-i18n="label-vcard-org">Organización</label>
+                        <input type="text" id="vcard-org" placeholder="Mi Empresa">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-url" data-i18n="label-vcard-url">Sitio Web</label>
+                        <input type="text" id="vcard-url" placeholder="https://mi-sitio.com">
+                    </div>
+                </div>
+
+                <!-- Email Form -->
+                <div id="form-email" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="email-to" data-i18n="contact-label-email">Tu correo electrónico</label>
+                        <input type="text" id="email-to" placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-subject" data-i18n="label-email-subject">Asunto</label>
+                        <input type="text" id="email-subject" placeholder="Hola">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-body" data-i18n="label-email-body">Cuerpo del mensaje</label>
+                        <input type="text" id="email-body" placeholder="Escribe el mensaje...">
+                    </div>
+                </div>
+
+                <!-- SMS Form -->
+                <div id="form-sms" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="sms-phone" data-i18n="label-phone-number">Número de Teléfono</label>
+                        <input type="text" id="sms-phone" placeholder="+123456789">
+                    </div>
+                    <div class="input-group">
+                        <label for="sms-message" data-i18n="label-sms-message">Mensaje</label>
+                        <input type="text" id="sms-message" placeholder="Escribe tu mensaje...">
+                    </div>
+                </div>
+
+                <!-- Phone Form -->
+                <div id="form-phone" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="phone-number" data-i18n="label-phone-number">Número de Teléfono</label>
+                        <input type="text" id="phone-number" placeholder="+123456789">
+                    </div>
                 </div>
             </div>
 
@@ -250,6 +360,47 @@
                 <button id="clear-logo" class="btn btn-outline" data-i18n="btn-clear-logo">Quitar Logo</button>
             </div>
 
+            <!-- Tab Content: Scanner -->
+            <div id="tab-scan" class="control-section">
+                <div class="scanner-container">
+                    <div class="scanner-camera-wrapper">
+                        <video id="scan-video" playsinline></video>
+                        <canvas id="scan-canvas" style="display: none;"></canvas>
+                        <div class="scanner-overlay" id="scanner-overlay" style="display: none;">
+                            <div class="scanner-laser"></div>
+                        </div>
+                    </div>
+                    <button type="button" id="scan-camera-btn" class="btn btn-primary" data-i18n="scan-start-camera">Iniciar Cámara</button>
+                    
+                    <div style="text-align: center; margin: 0.5rem 0; font-size: 0.75rem; color: var(--text-muted);">— O —</div>
+
+                    <div class="file-upload">
+                        <label for="scan-file-input">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
+                            </svg>
+                            <span data-i18n="scan-upload-btn">Subir imagen de QR</span>
+                        </label>
+                        <input type="file" id="scan-file-input" accept="image/*">
+                    </div>
+
+                    <div id="scan-status" class="scan-status" style="display: none;"></div>
+
+                    <div id="scan-result-wrapper" class="input-group" style="display: none; margin-top: 1rem;">
+                        <label for="scan-result" data-i18n="scan-success-msg">¡Código QR detectado con éxito!</label>
+                        <textarea id="scan-result" readonly rows="3" style="resize: none; font-size: 0.85rem; padding: 0.5rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; width: 100%;"></textarea>
+                        <div class="action-buttons" style="margin-top: 0.5rem;">
+                            <button type="button" id="scan-copy-btn" class="btn btn-secondary">
+                                <span data-i18n="btn-copy">Copiar</span>
+                            </button>
+                            <button type="button" id="scan-import-btn" class="btn btn-primary">
+                                <span data-i18n="btn-import">Importar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Predefined Styles (Presets) - Extracted out of tab wrappers so it stays visible -->
             <div class="input-group minimized-presets" id="presets-container-group">
                 <label data-i18n="label-presets">Estilos Predefinidos</label>
@@ -292,6 +443,28 @@
                     </button>
                 </div>
                 <button type="button" id="presets-toggle-btn" class="presets-toggle-btn" data-i18n="presets-show-more">Mostrar más</button>
+            </div>
+
+            <!-- Resolution Selector -->
+            <div class="input-group" style="margin-top: 0.25rem;">
+                <label for="download-resolution" data-i18n="label-resolution">Resolución</label>
+                <select id="download-resolution" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; width: 100%;">
+                    <option value="300" data-i18n="res-low">Baja (300px)</option>
+                    <option value="600" selected data-i18n="res-std">Estándar (600px)</option>
+                    <option value="1200" data-i18n="res-high">Alta (1200px)</option>
+                    <option value="2400" data-i18n="res-ultra">Impresión (2400px)</option>
+                </select>
+            </div>
+
+            <!-- Creation History -->
+            <div class="input-group minimized-presets" id="history-container-group" style="margin-top: 0.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label data-i18n="label-history">Historial de Creaciones</label>
+                    <button type="button" id="history-clear-btn" style="background: none; border: none; font-size: 0.65rem; color: var(--text-muted); cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;" data-i18n="btn-history-clear">Limpiar</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- Dynamic history loaded from localStorage -->
+                </div>
             </div>
 
             <footer class="sidebar-footer">
@@ -381,15 +554,19 @@
             <div class="contact-icon">
                 <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
             </div>
-            <h2 data-i18n="contact-title">¿Sugerencias o solicitudes?</h2>
+            <h2 data-i18n="contact-title">Enviar mensaje</h2>
             <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <label for="contact-name" data-i18n="contact-label-name">Tu nombre</label>
+                    <input type="text" id="contact-name" required data-i18n-placeholder="contact-placeholder-name" placeholder="Escribe tu nombre">
+                </div>
                 <div class="form-group">
                     <label for="contact-email" data-i18n="contact-label-email">Tu correo electrónico</label>
                     <input type="email" id="contact-email" required data-i18n-placeholder="contact-placeholder-email" placeholder="ejemplo@correo.com">
                 </div>
                 <div class="form-group">
                     <label for="contact-message" data-i18n="contact-label-message">Mensaje</label>
-                    <textarea id="contact-message" required rows="4" data-i18n-placeholder="contact-placeholder-message" placeholder="Escribe tu sugerencia o solicitud aquí..."></textarea>
+                    <textarea id="contact-message" required rows="4" data-i18n-placeholder="contact-placeholder-message" placeholder="Escribe tu mensaje..."></textarea>
                 </div>
                 <button type="submit" id="contact-submit" class="btn-send">
                     <span data-i18n="contact-btn-send">Enviar mensaje</span>
