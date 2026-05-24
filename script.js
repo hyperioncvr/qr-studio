@@ -1068,24 +1068,25 @@ if (contactForm) {
                 },
                 body: JSON.stringify({
                     _subject: "QR Studio — Nueva sugerencia / solicitud",
-                    Nombre: nameVal,
-                    Email: emailVal,
-                    Message: messageVal
+                    name: nameVal,
+                    email: emailVal,
+                    message: messageVal
                 })
             });
             
             const data = await response.json();
+            console.log("FormSubmit response data:", data);
             
-            if (response.ok && data.success === "true") {
+            if (response.ok) {
                 contactStatus.className = "form-status success";
                 contactStatus.style.display = "block";
                 contactStatus.textContent = t("contact-success") || "¡Mensaje enviado con éxito!";
                 contactForm.reset();
                 setTimeout(() => {
                     contactOverlay.classList.remove("active");
-                }, 2500);
+                }, 3500);
             } else {
-                throw new Error("Failed to send");
+                throw new Error(data.message || "Failed to send");
             }
         } catch (err) {
             console.error("Error al enviar mensaje:", err);
