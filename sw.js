@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-studio-v1.4';
+const CACHE_NAME = 'qr-studio-v1.5';
 const ASSETS = [
   './',
   './index.html',
@@ -46,10 +46,52 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-First for local assets, Cache-First for CDNs/external assets
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  // Only handle GET requests. POST and other methods must bypass cache completely
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const url = new URL(event.request.url);
+  const isLocalAsset = url.origin === self.location.origin;
+
+  if (isLocalAsset) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // If valid response, cache it
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fall back to cache if offline
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Cache-First for CDNs/Google Fonts
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        });
+      })
+    );
+  }
 });
+

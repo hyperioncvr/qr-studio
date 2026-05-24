@@ -1074,10 +1074,18 @@ if (contactForm) {
                 })
             });
             
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                data = {};
+            }
             console.log("FormSubmit response data:", data);
             
-            if (response.ok) {
+            // FormSubmit returns data.success as "true" (string) or true (boolean)
+            const isSuccess = response.ok && (data.success === true || data.success === "true" || data.success === undefined);
+            
+            if (isSuccess) {
                 contactStatus.className = "form-status success";
                 contactStatus.style.display = "block";
                 contactStatus.textContent = t("contact-success") || "¡Mensaje enviado con éxito!";
@@ -1086,13 +1094,15 @@ if (contactForm) {
                     contactOverlay.classList.remove("active");
                 }, 3500);
             } else {
-                throw new Error(data.message || "Failed to send");
+                const errorMsg = data.message || (data.success === "false" || data.success === false ? "FormSubmit error" : `HTTP ${response.status}`);
+                throw new Error(errorMsg);
             }
         } catch (err) {
             console.error("Error al enviar mensaje:", err);
             contactStatus.className = "form-status error";
             contactStatus.style.display = "block";
-            contactStatus.textContent = t("contact-error-send") || "Ocurrió un error al enviar.";
+            const baseError = t("contact-error-send") || "Ocurrió un error al enviar.";
+            contactStatus.textContent = `${baseError} (${err.message})`;
         } finally {
             contactSubmit.disabled = false;
             if (btnTextSpan) btnTextSpan.textContent = originalBtnText;
