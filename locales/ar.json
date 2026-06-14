@@ -1,5 +1,5 @@
 {
-  "subtitle": "مولد رموز QR مجاني - بدون اشتراك",
+  "subtitle": "QR مجاني",
   "meta-description": "أنشئ رموز استجابة سريعة (QR) متجهة واحترافية مجانًا 100٪ وبدون أي اشتراك. تصدير بدقة عالية بصيغة SVG و PNG بخصوصية محلية كاملة وبدون تسجيل.",
   "tab-content": "المحتوى",
   "tab-style": "النمط",
@@ -41,14 +41,14 @@
   "label-hide-dots": "إخفاء النقاط خلف الشعار",
   "label-logo-size": "حجم الشعار: ",
   "btn-clear-logo": "إزالة الشعار",
-  "footer-privacy": "<strong>خصوصية مطلقة:</strong> لا تغادر بياناتك وملفاتك متصفحك أبداً.",
+  "footer-privacy": "<strong>خصوصية محلية:</strong> لا تغادر بياناتك وملفاتك متصفحك أبداً.",
   "btn-donate-text": "دعم المشروع بتبرع",
   "btn-download-svg": "تحميل SVG",
   "btn-download-png": "PNG",
   "btn-copy-qr": "نسخ",
   "donate-title": "ادعم هذا المشروع",
   "donate-description": "إذا كان QR Studio مفيداً لك، يرجى التفكير في دعم تطويره بتبرع اختياري.",
-  "donate-other": "آخر",
+  "donate-other": "مبلغ آخر",
   "donate-placeholder": "أدخل المبلغ بالدولار",
   "donate-btn-paypal": "تبرع عبر PayPal",
   "donate-footer-text": "سيتم توجيهك بأمان إلى PayPal.",
@@ -61,7 +61,7 @@
   "contact-label-email": "بريدك الإلكتروني",
   "contact-label-message": "الرسالة أو الاقتراح",
   "contact-placeholder-email": "example@mail.com",
-  "contact-placeholder-message": "أدخل اقتراحك أو الرسالة التي ترغب في إرسالها...",
+  "contact-placeholder-message": "أخبرنا كيف يمكننا التحسين أو ما الميزة التي ترغب في رؤيتها...",
   "contact-btn-send": "إرسال",
   "contact-sending": "جاري الإرسال...",
   "contact-success": "تم إرسال الرسالة بنجاح! شكراً لدعمك.",
@@ -98,7 +98,7 @@
   "scan-success-msg": "تم اكتشاف رمز QR بنجاح!",
   "btn-copy": "نسخ",
   "btn-import": "استيراد",
-  "label-history": "سجل الإبداعات",
+  "label-history": "سجل الإنشاءات",
   "history-empty": "لا توجد رموز QR محفوظة",
   "history-saved-toast": "تم الحفظ في السجل!",
   "btn-history-clear": "مسح السجل",
@@ -106,5 +106,5 @@
   "res-low": "منخفضة (300 بكسل)",
   "res-std": "قياسية (600 بكسل)",
   "res-high": "عالية (1200 بكسل)",
-  "res-ultra": "طباعة فائقة (2400 بكسل)"
+  "res-ultra": "جودة الطباعة (2400 بكسل)"
 }

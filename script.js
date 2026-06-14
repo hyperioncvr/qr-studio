@@ -43,7 +43,7 @@ const setLanguage = async (lang) => {
     const trans = activeTranslations[lang];
 
     // Update dynamic header metadata for localized SEO
-    const pageTitle = `QR Studio — ${trans["subtitle"] || "Generador Profesional"}`;
+    const pageTitle = `QR Studio — ${trans["subtitle"] || "QR Gratis"}`;
     document.title = pageTitle;
 
     const ogTitleMeta = document.querySelector('meta[property="og:title"]');
