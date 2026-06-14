@@ -556,20 +556,35 @@ const toggleCamera = async () => {
 
 const startCamera = async () => {
     try {
-        scanStatus.style.display = "none";
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error("camera-not-supported");
+        }
+
+        scanStatus.textContent = t("scan-permission-request") || "El navegador solicitará permiso para usar la cámara.";
+        scanStatus.style.display = "block";
+        scanStatus.className = "scan-status";
         scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
         scanVideo.srcObject = scanStream;
         scanVideo.setAttribute("playsinline", true); 
-        scanVideo.play();
+        await scanVideo.play();
         scanActive = true;
         scanCameraBtn.textContent = t("scan-stop-camera") || "Detener Cámara";
         scanCameraBtn.classList.remove("btn-primary");
         scanCameraBtn.classList.add("btn-secondary");
+        scanStatus.style.display = "none";
         scanOverlay.style.display = "block";
         requestAnimationFrame(tickScan);
     } catch (err) {
         console.error("Camera error:", err);
-        scanStatus.textContent = "Error al acceder a la cámara. Revisa los permisos.";
+        if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+            scanStatus.textContent = t("scan-permission-denied") || "Permiso de cámara denegado. Actívalo en el navegador e inténtalo de nuevo.";
+        } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+            scanStatus.textContent = t("scan-camera-not-found") || "No se encontró una cámara disponible en este dispositivo.";
+        } else if (err.message === "camera-not-supported") {
+            scanStatus.textContent = t("scan-camera-unsupported") || "Este navegador no permite usar la cámara desde esta página.";
+        } else {
+            scanStatus.textContent = t("scan-camera-error") || "Error al acceder a la cámara. Revisa los permisos del navegador.";
+        }
         scanStatus.style.display = "block";
         scanStatus.className = "scan-status error";
     }

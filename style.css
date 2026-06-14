@@ -420,16 +420,15 @@ input[type="range"]::-webkit-slider-thumb {
   --qr-bg: #ffffff;
   --qr-fg: #1e293b;
   --qr-fg-soft: var(--qr-fg);
+  --finder-radius: 5px;
   width: 34px;
   height: 34px;
   border-radius: 7px;
   display: block;
   flex-shrink: 0;
+  position: relative;
   background-color: var(--qr-bg);
   background-image:
-    linear-gradient(var(--qr-fg), var(--qr-fg)),
-    linear-gradient(var(--qr-fg), var(--qr-fg)),
-    linear-gradient(var(--qr-fg), var(--qr-fg)),
     linear-gradient(var(--qr-fg-soft), var(--qr-fg-soft)),
     linear-gradient(var(--qr-fg), var(--qr-fg)),
     linear-gradient(var(--qr-fg-soft), var(--qr-fg-soft)),
@@ -438,9 +437,6 @@ input[type="range"]::-webkit-slider-thumb {
     linear-gradient(var(--qr-fg), var(--qr-fg)),
     linear-gradient(var(--qr-fg-soft), var(--qr-fg-soft));
   background-position:
-    5px 5px,
-    20px 5px,
-    5px 20px,
     17px 17px,
     24px 18px,
     18px 24px,
@@ -449,9 +445,6 @@ input[type="range"]::-webkit-slider-thumb {
     17px 10px,
     10px 26px;
   background-size:
-    9px 9px,
-    9px 9px,
-    9px 9px,
     4px 4px,
     3px 3px,
     5px 3px,
@@ -464,6 +457,33 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.45), var(--shadow-sm);
 }
 
+.preset-swatch::before,
+.preset-swatch::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.preset-swatch::before {
+  top: 5px;
+  left: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--finder-radius);
+  background: var(--qr-fg);
+  box-shadow: 15px 0 0 var(--qr-fg), 0 15px 0 var(--qr-fg);
+}
+
+.preset-swatch::after {
+  top: 7px;
+  left: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: calc(var(--finder-radius) * 0.65);
+  background: var(--qr-bg);
+  box-shadow: 15px 0 0 var(--qr-bg), 0 15px 0 var(--qr-bg);
+}
+
 .preset-corporate {
   --qr-bg: #ffffff;
   --qr-fg: #1e293b;
@@ -474,6 +494,7 @@ input[type="range"]::-webkit-slider-thumb {
   --qr-bg: #ffffff;
   --qr-fg: #111827;
   --qr-fg-soft: #111827;
+  --finder-radius: 1px;
 }
 
 .preset-midnight {
