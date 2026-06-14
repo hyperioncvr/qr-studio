@@ -459,7 +459,7 @@ if (contentTypeSelect) {
         });
         const activeSubform = document.getElementById(`form-${type}`);
         if (activeSubform) {
-            activeSubform.style.display = "block";
+            activeSubform.style.display = "flex";
         }
         updateQR();
     });
@@ -681,7 +681,7 @@ if (scanImportBtn) {
             });
             const activeSubform = document.getElementById("form-url");
             if (activeSubform) {
-                activeSubform.style.display = "block";
+                activeSubform.style.display = "flex";
             }
         }
         urlInput.value = scanResult.value;
@@ -749,6 +749,27 @@ const saveToHistory = (manual = false) => {
     }
 };
 
+const buildHistoryDescription = (item) => {
+    const rawData = typeof item.data === "string" ? item.data : "";
+    let desc = rawData;
+
+    if (desc.startsWith("WIFI:")) {
+        const ssidMatch = desc.match(/S:([^;]+)/);
+        desc = `Wi-Fi: ${ssidMatch ? ssidMatch[1] : "Network"}`;
+    } else if (desc.startsWith("BEGIN:VCARD")) {
+        const fnMatch = desc.match(/FN:([^\n\r]+)/);
+        desc = `Contacto: ${fnMatch ? fnMatch[1] : "vCard"}`;
+    } else if (desc.startsWith("mailto:")) {
+        desc = `Email: ${desc.split("?")[0].replace("mailto:", "")}`;
+    } else if (desc.startsWith("tel:")) {
+        desc = `Tel: ${desc.replace("tel:", "")}`;
+    } else if (desc.length > 30) {
+        desc = `${desc.substring(0, 27)}...`;
+    }
+
+    return desc;
+};
+
 const renderHistory = () => {
     const historyList = document.getElementById("history-list");
     if (!historyList) return;
@@ -761,60 +782,124 @@ const renderHistory = () => {
     }
 
     if (history.length === 0) {
-        historyList.innerHTML = `<div class="history-empty" data-i18n="history-empty">${t("history-empty") || "No hay códigos QR guardados"}</div>`;
+        historyList.replaceChildren();
+        const empty = document.createElement("div");
+        empty.className = "history-empty";
+        empty.setAttribute("data-i18n", "history-empty");
+        empty.textContent = t("history-empty") || "No hay códigos QR guardados";
+        historyList.appendChild(empty);
         return;
     }
 
-    historyList.innerHTML = history.map(item => {
-        let desc = item.data;
-        if (desc.startsWith("WIFI:")) {
-            const ssidMatch = desc.match(/S:([^;]+)/);
-            desc = `Wi-Fi: ${ssidMatch ? ssidMatch[1] : 'Network'}`;
-        } else if (desc.startsWith("BEGIN:VCARD")) {
-            const fnMatch = desc.match(/FN:([^\n\r]+)/);
-            desc = `Contacto: ${fnMatch ? fnMatch[1] : 'vCard'}`;
-        } else if (desc.startsWith("mailto:")) {
-            desc = `Email: ${desc.split('?')[0].replace('mailto:', '')}`;
-        } else if (desc.startsWith("tel:")) {
-            desc = `Tel: ${desc.replace('tel:', '')}`;
-        } else if (desc.length > 30) {
-            desc = desc.substring(0, 27) + "...";
-        }
+    historyList.replaceChildren();
 
-        return `
-            <div class="history-item" data-id="${item.id}">
-                <div class="history-swatch" style="background: ${item.trans ? 'transparent' : item.bg}; border: 1px solid ${item.dotColor}; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                    <span class="history-swatch-dot" style="background: ${item.dotColor}; width: 8px; height: 8px; border-radius: 50%;"></span>
-                </div>
-                <div class="history-info" style="flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0;">
-                    <span class="history-title" style="font-size: 0.75rem; font-weight: 500; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${desc}</span>
-                    <span class="history-date" style="font-size: 0.6rem; color: var(--text-muted);">${item.timestamp}</span>
-                </div>
-                <div class="history-actions" style="display: flex; gap: 0.35rem; flex-shrink: 0;">
-                    <button type="button" class="history-btn-load" title="Cargar" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all var(--transition);">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6m16 10v-6h-6M21.9 8a10 10 0 00-19.18-2L1 10m22 4l-1.72 4a10 10 0 01-19.18-2"/></svg>
-                    </button>
-                    <button type="button" class="history-btn-del" title="Eliminar" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 4px; width: 22px; height: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all var(--transition);">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
+    history.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "history-item";
+        row.dataset.id = String(item.id);
 
-    // Bind event actions
-    historyList.querySelectorAll(".history-item").forEach(elem => {
-        const id = parseInt(elem.dataset.id);
-        const item = history.find(x => x.id === id);
-        if (!item) return;
+        const swatch = document.createElement("div");
+        swatch.className = "history-swatch";
+        swatch.style.background = item.trans ? "transparent" : (item.bg || "transparent");
+        swatch.style.border = `1px solid ${item.dotColor || "var(--border)"}`;
+        swatch.style.width = "18px";
+        swatch.style.height = "18px";
+        swatch.style.borderRadius = "4px";
+        swatch.style.display = "inline-flex";
+        swatch.style.alignItems = "center";
+        swatch.style.justifyContent = "center";
+        swatch.style.flexShrink = "0";
 
-        elem.querySelector(".history-btn-load").addEventListener("click", () => {
+        const swatchDot = document.createElement("span");
+        swatchDot.className = "history-swatch-dot";
+        swatchDot.style.background = item.dotColor || "var(--accent)";
+        swatchDot.style.width = "8px";
+        swatchDot.style.height = "8px";
+        swatchDot.style.borderRadius = "50%";
+        swatch.appendChild(swatchDot);
+
+        const info = document.createElement("div");
+        info.className = "history-info";
+        info.style.flex = "1";
+        info.style.display = "flex";
+        info.style.flexDirection = "column";
+        info.style.gap = "1px";
+        info.style.minWidth = "0";
+
+        const title = document.createElement("span");
+        title.className = "history-title";
+        title.style.fontSize = "0.75rem";
+        title.style.fontWeight = "500";
+        title.style.color = "var(--text)";
+        title.style.overflow = "hidden";
+        title.style.textOverflow = "ellipsis";
+        title.style.whiteSpace = "nowrap";
+        title.textContent = buildHistoryDescription(item);
+
+        const date = document.createElement("span");
+        date.className = "history-date";
+        date.style.fontSize = "0.6rem";
+        date.style.color = "var(--text-muted)";
+        date.textContent = item.timestamp || "";
+
+        info.appendChild(title);
+        info.appendChild(date);
+
+        const actions = document.createElement("div");
+        actions.className = "history-actions";
+        actions.style.display = "flex";
+        actions.style.gap = "0.35rem";
+        actions.style.flexShrink = "0";
+
+        const loadBtn = document.createElement("button");
+        loadBtn.type = "button";
+        loadBtn.className = "history-btn-load";
+        loadBtn.title = "Cargar";
+        loadBtn.style.background = "var(--input-bg)";
+        loadBtn.style.border = "1px solid var(--border)";
+        loadBtn.style.borderRadius = "4px";
+        loadBtn.style.width = "22px";
+        loadBtn.style.height = "22px";
+        loadBtn.style.cursor = "pointer";
+        loadBtn.style.display = "flex";
+        loadBtn.style.alignItems = "center";
+        loadBtn.style.justifyContent = "center";
+        loadBtn.style.color = "var(--text-secondary)";
+        loadBtn.style.transition = "all var(--transition)";
+        loadBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6m16 10v-6h-6M21.9 8a10 10 0 00-19.18-2L1 10m22 4l-1.72 4a10 10 0 01-19.18-2"/></svg>';
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "history-btn-del";
+        deleteBtn.title = "Eliminar";
+        deleteBtn.style.background = "var(--input-bg)";
+        deleteBtn.style.border = "1px solid var(--border)";
+        deleteBtn.style.borderRadius = "4px";
+        deleteBtn.style.width = "22px";
+        deleteBtn.style.height = "22px";
+        deleteBtn.style.cursor = "pointer";
+        deleteBtn.style.display = "flex";
+        deleteBtn.style.alignItems = "center";
+        deleteBtn.style.justifyContent = "center";
+        deleteBtn.style.color = "var(--text-secondary)";
+        deleteBtn.style.transition = "all var(--transition)";
+        deleteBtn.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>';
+
+        loadBtn.addEventListener("click", () => {
             loadHistoryItem(item);
         });
 
-        elem.querySelector(".history-btn-del").addEventListener("click", () => {
-            deleteHistoryItem(id);
+        deleteBtn.addEventListener("click", () => {
+            deleteHistoryItem(item.id);
         });
+
+        actions.appendChild(loadBtn);
+        actions.appendChild(deleteBtn);
+
+        row.appendChild(swatch);
+        row.appendChild(info);
+        row.appendChild(actions);
+        historyList.appendChild(row);
     });
 };
 
@@ -827,7 +912,7 @@ const loadHistoryItem = (item) => {
         });
         const activeSubform = document.getElementById(`form-${item.type}`);
         if (activeSubform) {
-            activeSubform.style.display = "block";
+            activeSubform.style.display = "flex";
         }
     }
 

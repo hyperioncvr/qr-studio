@@ -18,10 +18,7 @@ const ASSETS = [
   './locales/fr.json',
   './locales/ja.json',
   './locales/ko.json',
-  './locales/ar.json',
-  'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap',
-  'https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js',
-  'https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'
+  './locales/ar.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -94,4 +91,3 @@ self.addEventListener('fetch', (event) => {
     );
   }
 });
-

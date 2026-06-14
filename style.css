@@ -1070,7 +1070,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .info-badge {
-    order: 6;
+    order: 8;
     position: static;
     margin: 1rem auto 0.5rem auto !important;
     padding: 0 1.75rem;
@@ -1099,8 +1099,26 @@ input[type="range"]::-webkit-slider-thumb {
     box-sizing: border-box;
   }
 
-  .preview-card {
+  #resolution-container-group,
+  #history-container-group {
+    background: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 1.75rem;
+    margin: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #resolution-container-group {
     order: 5;
+  }
+
+  #history-container-group {
+    order: 6;
+  }
+
+  .preview-card {
+    order: 7;
     margin: 1rem auto 2rem auto;
     width: 90%;
     max-width: 420px;
@@ -1119,18 +1137,21 @@ input[type="range"]::-webkit-slider-thumb {
     box-sizing: border-box;
   }
 
-  /* URL input when inside the active tab-content on mobile */
+  /* Keep content controls grouped on mobile so subforms do not float above the header */
   #tab-content.active {
-    display: contents;
-  }
-
-  #tab-content.active > .input-group:not(#presets-container-group) {
     order: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
     background: var(--sidebar-bg);
     padding: 0.5rem 1.75rem 1.5rem 1.75rem;
     border-bottom: 1px solid var(--border);
     width: 100%;
     box-sizing: border-box;
+  }
+
+  #tab-content.active > .input-group:not(#presets-container-group) {
+    padding: 0;
   }
 
   /* Other control sections when active on mobile */
@@ -1145,7 +1166,7 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   .sidebar-footer {
-    order: 7;
+    order: 9;
     border-top: 1px solid var(--border);
     background: var(--sidebar-bg);
     padding: 2rem 1.75rem;
@@ -1175,6 +1196,11 @@ input[type="range"]::-webkit-slider-thumb {
     padding: 1.25rem;
   }
 
+  #resolution-container-group,
+  #history-container-group {
+    padding: 1.25rem;
+  }
+
   .info-badge {
     padding: 0 1.25rem;
   }
@@ -1184,6 +1210,10 @@ input[type="range"]::-webkit-slider-thumb {
   }
 
   #tab-content.active > .input-group:not(#presets-container-group) {
+    padding: 0;
+  }
+
+  #tab-content.active {
     padding: 0.5rem 1.25rem 1.25rem 1.25rem;
   }
 
@@ -1427,4 +1457,3 @@ input[type="range"]::-webkit-slider-thumb {
 #form-vcard .select-row {
   margin-bottom: 0;
 }
-
