@@ -164,10 +164,10 @@ let currentLogo = "";
 let currentBgImage = "";
 let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const QR_PREVIEW_SIZE = 300;
+const QR_PREVIEW_SIZE = 720;
 const PRESET_SWATCH_SIZE = 120;
 const presetSwatchUrls = [];
-const QR_PREVIEW_MARGIN = 10;
+const QR_PREVIEW_MARGIN = 16;
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
 const getPresetQrMargin = (size) => Math.max(4, Math.round(size * 0.08));

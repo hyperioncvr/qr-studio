@@ -743,7 +743,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: var(--radius);
   border: none;
   width: 100%;
-  max-width: 300px;
+  max-width: 720px;
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
