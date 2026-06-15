@@ -738,10 +738,10 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* ── QR Wrapper ── */
 .qr-wrapper {
-  background: #ffffff;
+  background: transparent;
   padding: 0;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: none;
   width: 100%;
   max-width: 340px;
   display: flex;
@@ -749,33 +749,23 @@ input[type="range"]::-webkit-slider-thumb {
   align-items: center;
   box-sizing: border-box;
   margin: 0 auto;
-  transition:
-    background-color 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease;
+  transition: background-color 0.35s ease;
 }
 
 #qrcode {
   width: 100%;
   max-width: 300px;
-  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#qrcode > * {
-  width: 100% !important;
-  height: 100% !important;
 }
 
 #qrcode svg,
 #qrcode canvas,
 #qrcode img {
   width: 100% !important;
-  height: 100% !important;
+  height: auto !important;
   max-width: 100% !important;
-  max-height: 100% !important;
   display: block;
 }
 

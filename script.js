@@ -295,7 +295,7 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg", margin = getQrM
     };
 };
 
-const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "canvas", margin) => {
+const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "svg", margin) => {
     return new QRCodeStyling(getQrConfig(size, renderType, margin));
 };
 
@@ -309,7 +309,7 @@ const updateQR = () => {
     // Recreate instance on every update for clean rendering
     qrElement.innerHTML = "";
 
-    qrCode = createQrInstance(QR_PREVIEW_SIZE, "canvas", QR_PREVIEW_MARGIN);
+    qrCode = createQrInstance(QR_PREVIEW_SIZE, "svg", QR_PREVIEW_MARGIN);
 
     qrCode.append(qrElement);
 
@@ -318,27 +318,8 @@ const updateQR = () => {
     if (qrWrapper) {
         if (bgTransparentInput.checked) {
             qrWrapper.style.backgroundColor = "transparent";
-            qrWrapper.style.borderColor = "var(--border)";
-            qrWrapper.style.boxShadow = "none";
         } else {
             qrWrapper.style.backgroundColor = bgColorInput.value;
-
-            // Detect brightness to adjust wrapper chrome
-            const hex = bgColorInput.value.replace('#', '');
-            const r = parseInt(hex.substr(0, 2), 16);
-            const g = parseInt(hex.substr(2, 2), 16);
-            const b = parseInt(hex.substr(4, 2), 16);
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-            if (luminance < 0.4) {
-                // Dark background
-                qrWrapper.style.borderColor = "rgba(255, 255, 255, 0.06)";
-                qrWrapper.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.3)";
-            } else {
-                // Light background
-                qrWrapper.style.borderColor = "var(--border)";
-                qrWrapper.style.boxShadow = "none";
-            }
         }
     }
 
