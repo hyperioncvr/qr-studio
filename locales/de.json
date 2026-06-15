@@ -107,7 +107,7 @@
   "history-empty": "Keine gespeicherten QR-Codes",
   "history-saved-toast": "Im Verlauf gespeichert!",
   "btn-history-clear": "Verlauf löschen",
-  "label-resolution": "PNG-Auflösung",
+  "label-resolution": "PNG-Größe",
   "res-low": "Niedrig (300px)",
   "res-std": "Standard (600px)",
   "res-high": "Hoch (1200px)",

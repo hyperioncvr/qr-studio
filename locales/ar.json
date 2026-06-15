@@ -107,7 +107,7 @@
   "history-empty": "لا توجد رموز QR محفوظة",
   "history-saved-toast": "تم الحفظ في السجل!",
   "btn-history-clear": "مسح السجل",
-  "label-resolution": "دقة PNG",
+  "label-resolution": "حجم PNG",
   "res-low": "منخفضة (300 بكسل)",
   "res-std": "قياسية (600 بكسل)",
   "res-high": "عالية (1200 بكسل)",

@@ -163,6 +163,9 @@ let currentLogo = "";
 let currentBgImage = "";
 let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const QR_PREVIEW_SIZE = 300;
+
+const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
 
 // Tab Logic
 const tabs = document.querySelectorAll('.tab-btn');
@@ -225,8 +228,7 @@ const updateHexDisplays = () => {
     if (bgColorHex) bgColorHex.textContent = bgColorInput.value;
 };
 
-// Update function
-const updateQR = () => {
+const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
     // Toggle class based on style for crisp edges on square modules
     if (dotStyleInput.value === "square") {
         qrElement.classList.add("style-square");
@@ -237,7 +239,7 @@ const updateQR = () => {
     // Dot options
     const dotsOptions = {
         type: dotStyleInput.value,
-        roundSize: false,
+        roundSize: dotStyleInput.value !== "square",
         color: dotColorInput.value,
         gradient: dotGradientType.value !== "none" ? {
             type: dotGradientType.value,
@@ -257,13 +259,11 @@ const updateQR = () => {
         backgroundOptions.image = currentBgImage;
     }
 
-    // Recreate instance on every update for clean rendering
-    qrElement.innerHTML = "";
-
-    qrCode = new QRCodeStyling({
-        width: 300,
-        height: 300,
-        type: "canvas",
+    return {
+        width: size,
+        height: size,
+        type: renderType,
+        margin: getQrMargin(size),
         data: getCompiledQRData() || " ",
         dotsOptions: dotsOptions,
         backgroundOptions: backgroundOptions,
@@ -281,7 +281,15 @@ const updateQR = () => {
             hideBackgroundDots: hideLogoDots.checked,
             margin: 5
         }
-    });
+    };
+};
+
+// Update function
+const updateQR = () => {
+    // Recreate instance on every update for clean rendering
+    qrElement.innerHTML = "";
+
+    qrCode = new QRCodeStyling(getQrConfig());
 
     qrCode.append(qrElement);
 
@@ -484,10 +492,10 @@ specializedInputs.forEach(id => {
     }
 });
 
-// Resolution & Download logic
+// Download logic
 const getDownloadOptions = (ext) => {
     const resSelect = document.getElementById("download-resolution");
-    const res = resSelect ? parseInt(resSelect.value) : 600;
+    const res = ext === "png" && resSelect ? parseInt(resSelect.value) : 1200;
     
     // Auto-save current config to history
     saveToHistory(false);
@@ -500,8 +508,66 @@ const getDownloadOptions = (ext) => {
     };
 };
 
-document.getElementById("download-svg").addEventListener("click", () => qrCode.download(getDownloadOptions("svg")));
-document.getElementById("download-png").addEventListener("click", () => qrCode.download(getDownloadOptions("png")));
+const downloadQr = (ext) => {
+    const options = getDownloadOptions(ext);
+    const exportType = ext === "svg" ? "svg" : "svg";
+    const exportQr = new QRCodeStyling(getQrConfig(options.width, exportType));
+    exportQr.download(options);
+};
+
+document.getElementById("download-svg").addEventListener("click", () => downloadQr("svg"));
+document.getElementById("download-png").addEventListener("click", () => downloadQr("png"));
+
+const getQrBlobForClipboard = async () => {
+    const canvas = qrElement.querySelector("canvas");
+    if (canvas) {
+        return await new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
+                } else {
+                    reject(new Error("canvas-blob-error"));
+                }
+            });
+        });
+    }
+
+    const svgElement = qrElement.querySelector("svg");
+    if (!svgElement) {
+        throw new Error("qr-not-rendered");
+    }
+
+    const svgMarkup = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
+
+    try {
+        const image = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error("svg-render-error"));
+            img.src = svgUrl;
+        });
+
+        const canvasForCopy = document.createElement("canvas");
+        canvasForCopy.width = image.width;
+        canvasForCopy.height = image.height;
+        const ctx = canvasForCopy.getContext("2d");
+        ctx.drawImage(image, 0, 0);
+
+        return await new Promise((resolve, reject) => {
+            canvasForCopy.toBlob((blob) => {
+                if (blob) {
+                    resolve(blob);
+                } else {
+                    reject(new Error("svg-blob-error"));
+                }
+            });
+        });
+    } finally {
+        URL.revokeObjectURL(svgUrl);
+    }
+};
 
 // Copy to Clipboard
 document.getElementById("copy-qr").addEventListener("click", async () => {
@@ -510,22 +576,18 @@ document.getElementById("copy-qr").addEventListener("click", async () => {
     const originalText = span ? span.textContent : "Copiar";
 
     try {
-        // Get the canvas element from the QR library
-        const canvas = qrElement.querySelector("canvas");
-
-        canvas.toBlob(async (blob) => {
-            const data = [new ClipboardItem({ [blob.type]: blob })];
-            await navigator.clipboard.write(data);
-            
-            if (span) {
-                span.textContent = t("copied") || "¡Copiado!";
-            }
-            btn.classList.add("btn-primary");
-            setTimeout(() => {
-                if (span) span.textContent = originalText;
-                btn.classList.remove("btn-primary");
-            }, 2000);
-        });
+        const blob = await getQrBlobForClipboard();
+        const data = [new ClipboardItem({ [blob.type]: blob })];
+        await navigator.clipboard.write(data);
+        
+        if (span) {
+            span.textContent = t("copied") || "¡Copiado!";
+        }
+        btn.classList.add("btn-primary");
+        setTimeout(() => {
+            if (span) span.textContent = originalText;
+            btn.classList.remove("btn-primary");
+        }, 2000);
     } catch (err) {
         console.error("Error al copiar:", err);
         alert(t("copy-error") || "Tu navegador no soporta la copia directa. Intenta descargar el PNG.");

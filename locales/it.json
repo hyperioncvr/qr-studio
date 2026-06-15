@@ -107,7 +107,7 @@
   "history-empty": "Nessun codice QR salvato",
   "history-saved-toast": "Salvato nella cronologia!",
   "btn-history-clear": "Cancella cronologia",
-  "label-resolution": "Risoluzione PNG",
+  "label-resolution": "Dimensione PNG",
   "res-low": "Bassa (300px)",
   "res-std": "Standard (600px)",
   "res-high": "Alta (1200px)",

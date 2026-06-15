@@ -107,7 +107,7 @@
   "history-empty": "无保存的二维码",
   "history-saved-toast": "已保存到历史记录！",
   "btn-history-clear": "清除历史",
-  "label-resolution": "PNG 分辨率",
+  "label-resolution": "PNG 下载尺寸",
   "res-low": "低 (300px)",
   "res-std": "标准 (600px)",
   "res-high": "高 (1200px)",

@@ -107,7 +107,7 @@
   "history-empty": "Нет сохраненных QR-кодов",
   "history-saved-toast": "Сохранено в историю!",
   "btn-history-clear": "Очистить историю",
-  "label-resolution": "Разрешение PNG",
+  "label-resolution": "Размер PNG",
   "res-low": "Низкое (300px)",
   "res-std": "Стандартное (600px)",
   "res-high": "Высокое (1200px)",

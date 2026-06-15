@@ -107,7 +107,7 @@
   "history-empty": "保存されたQRコードはありません",
   "history-saved-toast": "履歴に保存されました！",
   "btn-history-clear": "履歴をクリア",
-  "label-resolution": "PNG解像度",
+  "label-resolution": "PNGサイズ",
   "res-low": "低解像度 (300px)",
   "res-std": "標準 (600px)",
   "res-high": "高解像度 (1200px)",
