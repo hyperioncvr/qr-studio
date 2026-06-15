@@ -167,7 +167,6 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 720;
 const PRESET_SWATCH_SIZE = 120;
 const presetSwatchUrls = [];
-const QR_PREVIEW_MARGIN = 16;
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
 const getPresetQrMargin = (size) => Math.max(4, Math.round(size * 0.08));
@@ -304,14 +303,6 @@ const resetBackgroundImage = () => {
     bgImageFileInput.value = "";
 };
 
-const previewObjectUrls = [];
-
-const revokePreviewObjectUrls = () => {
-    while (previewObjectUrls.length) {
-        URL.revokeObjectURL(previewObjectUrls.pop());
-    }
-};
-
 const ensureNonTransparentBackground = () => {
     if (!bgTransparentInput.checked) return;
     const fallback = getComputedStyle(document.body).backgroundColor || "#ffffff";
@@ -328,55 +319,57 @@ const rgbStringToHex = (rgb) => {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
-const applyQuietZoneToSvgText = (svgText, bgColor) => {
+const getSvgShapeRendering = () => {
+    return dotStyleInput.value === "square" ? "crispEdges" : "geometricPrecision";
+};
+
+const expandSquareModuleRects = (svg) => {
+    if (dotStyleInput.value !== "square") return;
+
+    const rects = svg.querySelectorAll("rect");
+    const overlap = 0.2;
+
+    rects.forEach((rect) => {
+        const x = parseFloat(rect.getAttribute("x") || "0");
+        const y = parseFloat(rect.getAttribute("y") || "0");
+        const width = parseFloat(rect.getAttribute("width") || "0");
+        const height = parseFloat(rect.getAttribute("height") || "0");
+        const svgWidth = parseFloat(svg.getAttribute("width") || "0");
+        const svgHeight = parseFloat(svg.getAttribute("height") || "0");
+
+        if (
+            Number.isFinite(svgWidth) && Number.isFinite(svgHeight) &&
+            x === 0 && y === 0 && width === svgWidth && height === svgHeight
+        ) {
+            return;
+        }
+
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(width) || !Number.isFinite(height)) {
+            return;
+        }
+
+        rect.setAttribute("x", String(x - overlap));
+        rect.setAttribute("y", String(y - overlap));
+        rect.setAttribute("width", String(width + overlap * 2));
+        rect.setAttribute("height", String(height + overlap * 2));
+    });
+};
+
+const normalizeSvgText = (svgText) => {
     if (typeof DOMParser === "undefined") return svgText;
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgText, "image/svg+xml");
     const svg = doc.documentElement;
     if (!svg || svg.nodeName.toLowerCase() !== "svg") return svgText;
 
-    const padding = 16;
-    const modules = svg.querySelectorAll("path, rect");
-    let minX = Number.POSITIVE_INFINITY;
-    let minY = Number.POSITIVE_INFINITY;
-    let maxX = Number.NEGATIVE_INFINITY;
-    let maxY = Number.NEGATIVE_INFINITY;
-    modules.forEach((node) => {
-        const x = parseFloat(node.getAttribute("x") || "0");
-        const y = parseFloat(node.getAttribute("y") || "0");
-        const w = parseFloat(node.getAttribute("width") || "0");
-        const h = parseFloat(node.getAttribute("height") || "0");
-        if (Number.isFinite(x) && Number.isFinite(y) && (w > 0 || h > 0)) {
-            minX = Math.min(minX, x);
-            minY = Math.min(minY, y);
-            maxX = Math.max(maxX, x + w);
-            maxY = Math.max(maxY, y + h);
-        }
-    });
-    if (!Number.isFinite(minX) || !Number.isFinite(minY)) return svgText;
-
-    const x = Math.max(0, minX - padding);
-    const y = Math.max(0, minY - padding);
-    const w = (maxX - minX) + padding * 2;
-    const h = (maxY - minY) + padding * 2;
-
-    const ns = "http://www.w3.org/2000/svg";
-    const background = doc.createElementNS(ns, "rect");
-    background.setAttribute("x", x.toString());
-    background.setAttribute("y", y.toString());
-    background.setAttribute("width", w.toString());
-    background.setAttribute("height", h.toString());
-    background.setAttribute("fill", bgColor);
-    background.setAttribute("shape-rendering", "crispEdges");
-    svg.insertBefore(background, svg.firstChild);
-
-    modules.forEach((node) => {
-        if (node.getAttribute("stroke")) return;
-        node.setAttribute("stroke", bgColor);
-        node.setAttribute("stroke-width", "1.5");
-        node.setAttribute("stroke-linejoin", "round");
-        node.setAttribute("vector-effect", "non-scaling-stroke");
-    });
+    if (!svg.getAttribute("xmlns")) {
+        svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    }
+    if (!svg.getAttribute("preserveAspectRatio")) {
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+    }
+    svg.setAttribute("shape-rendering", getSvgShapeRendering());
+    expandSquareModuleRects(svg);
 
     return new XMLSerializer().serializeToString(svg);
 };
@@ -387,26 +380,15 @@ const getBackgroundColorForQr = () => {
 
 const createPreviewSvg = async () => {
     ensureNonTransparentBackground();
-    const exportQr = createQrInstance(QR_PREVIEW_SIZE, "svg", QR_PREVIEW_MARGIN);
+    const exportQr = createQrInstance(QR_PREVIEW_SIZE, "svg", getQrMargin(QR_PREVIEW_SIZE));
     const raw = await exportQr.getRawData("svg");
-    return applyQuietZoneToSvgText(await raw.text(), "#ffffff");
+    return normalizeSvgText(await raw.text());
 };
 
 const renderPreview = async () => {
-    revokePreviewObjectUrls();
-
     const svgText = await createPreviewSvg();
-    const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    previewObjectUrls.push(url);
-
     qrElement.replaceChildren();
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = "Vista previa del código QR";
-    img.decoding = "async";
-    img.draggable = false;
-    qrElement.appendChild(img);
+    qrElement.innerHTML = svgText;
 };
 
 // Update function
@@ -703,9 +685,9 @@ const triggerBlobDownload = (blob, filename) => {
 const downloadQr = async (ext) => {
     const options = getDownloadOptions(ext);
     ensureNonTransparentBackground();
-    const exportQr = createQrInstance(options.width, "svg", QR_PREVIEW_MARGIN);
+    const exportQr = createQrInstance(options.width, "svg", getQrMargin(options.width));
     const rawSvgBlob = await exportQr.getRawData("svg");
-    const svgText = applyQuietZoneToSvgText(await rawSvgBlob.text(), getBackgroundColorForQr());
+    const svgText = normalizeSvgText(await rawSvgBlob.text());
     if (ext === "svg") {
         const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
         triggerBlobDownload(blob, `${options.name}.${options.extension}`);
@@ -761,9 +743,9 @@ document.getElementById("download-png").addEventListener("click", () => {
 
 const getQrBlobForClipboard = async () => {
     ensureNonTransparentBackground();
-    const copyQr = createQrInstance(1200, "svg", QR_PREVIEW_MARGIN);
+    const copyQr = createQrInstance(1200, "svg", getQrMargin(1200));
     const rawSvgBlob = await copyQr.getRawData("svg");
-    const svgText = applyQuietZoneToSvgText(await rawSvgBlob.text(), getBackgroundColorForQr());
+    const svgText = normalizeSvgText(await rawSvgBlob.text());
     return await rasterizeSvgToPng(svgText, 1200);
 };
 
