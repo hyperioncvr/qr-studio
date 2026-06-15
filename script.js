@@ -328,15 +328,19 @@ const rgbStringToHex = (rgb) => {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
-const withQuietZoneExtension = (svg, options) => {
-    const { width, height } = options;
-    const safeWidth = width || 0;
-    const safeHeight = height || 0;
+const applyQuietZoneToSvgText = (svgText, bgColor) => {
+    if (typeof DOMParser === "undefined") return svgText;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgText, "image/svg+xml");
+    const svg = doc.documentElement;
+    if (!svg || svg.nodeName.toLowerCase() !== "svg") return svgText;
+
+    const padding = 16;
     const modules = svg.querySelectorAll("path, rect");
-    let minX = safeWidth;
-    let minY = safeHeight;
-    let maxX = 0;
-    let maxY = 0;
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
     modules.forEach((node) => {
         const x = parseFloat(node.getAttribute("x") || "0");
         const y = parseFloat(node.getAttribute("y") || "0");
@@ -349,37 +353,42 @@ const withQuietZoneExtension = (svg, options) => {
             maxY = Math.max(maxY, y + h);
         }
     });
-    const padding = Math.max(8, Math.round(safeWidth * 0.04));
+    if (!Number.isFinite(minX) || !Number.isFinite(minY)) return svgText;
+
     const x = Math.max(0, minX - padding);
     const y = Math.max(0, minY - padding);
-    const w = Math.min(safeWidth, maxX - minX + padding * 2);
-    const h = Math.min(safeHeight, maxY - minY + padding * 2);
-    if (w <= 0 || h <= 0) return svg;
+    const w = (maxX - minX) + padding * 2;
+    const h = (maxY - minY) + padding * 2;
 
     const ns = "http://www.w3.org/2000/svg";
-    const background = document.createElementNS(ns, "rect");
+    const background = doc.createElementNS(ns, "rect");
     background.setAttribute("x", x.toString());
     background.setAttribute("y", y.toString());
     background.setAttribute("width", w.toString());
     background.setAttribute("height", h.toString());
-    background.setAttribute("fill", "#ffffff");
+    background.setAttribute("fill", bgColor);
     background.setAttribute("shape-rendering", "crispEdges");
     svg.insertBefore(background, svg.firstChild);
 
-    return svg;
+    return new XMLSerializer().serializeToString(svg);
+};
+
+const getBackgroundColorForQr = () => {
+    return bgTransparentInput.checked ? "#ffffff" : bgColorInput.value;
 };
 
 const createPreviewSvg = async () => {
     ensureNonTransparentBackground();
     const exportQr = createQrInstance(QR_PREVIEW_SIZE, "svg", QR_PREVIEW_MARGIN);
-    exportQr.applyExtension(withQuietZoneExtension);
-    return await exportQr.getRawData("svg");
+    const raw = await exportQr.getRawData("svg");
+    return applyQuietZoneToSvgText(await raw.text(), "#ffffff");
 };
 
 const renderPreview = async () => {
     revokePreviewObjectUrls();
 
-    const blob = await createPreviewSvg();
+    const svgText = await createPreviewSvg();
+    const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     previewObjectUrls.push(url);
 
@@ -687,13 +696,12 @@ const downloadQr = async (ext) => {
     const options = getDownloadOptions(ext);
     ensureNonTransparentBackground();
     const exportQr = createQrInstance(options.width, "svg", QR_PREVIEW_MARGIN);
+    const rawSvgBlob = await exportQr.getRawData("svg");
+    const svgText = applyQuietZoneToSvgText(await rawSvgBlob.text(), getBackgroundColorForQr());
     if (ext === "svg") {
-        exportQr.applyExtension(withQuietZoneExtension);
-        const blob = await exportQr.getRawData("svg");
+        const blob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
         triggerBlobDownload(blob, `${options.name}.${options.extension}`);
     } else {
-        const svgBlob = await exportQr.getRawData("svg");
-        const svgText = await svgBlob.text();
         const pngBlob = await rasterizeSvgToPng(svgText, options.width);
         triggerBlobDownload(pngBlob, `${options.name}.${options.extension}`);
     }
@@ -713,7 +721,7 @@ const rasterizeSvgToPng = async (svgText, size) => {
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d");
-        ctx.fillStyle = bgTransparentInput.checked ? "#ffffff" : bgColorInput.value;
+        ctx.fillStyle = getBackgroundColorForQr();
         ctx.fillRect(0, 0, size, size);
         ctx.drawImage(image, 0, 0, size, size);
         return await new Promise((resolve, reject) => {
@@ -744,8 +752,11 @@ document.getElementById("download-png").addEventListener("click", () => {
 });
 
 const getQrBlobForClipboard = async () => {
-    const copyQr = createQrInstance(1200, "canvas");
-    return await copyQr.getRawData("png");
+    ensureNonTransparentBackground();
+    const copyQr = createQrInstance(1200, "svg", QR_PREVIEW_MARGIN);
+    const rawSvgBlob = await copyQr.getRawData("svg");
+    const svgText = applyQuietZoneToSvgText(await rawSvgBlob.text(), getBackgroundColorForQr());
+    return await rasterizeSvgToPng(svgText, 1200);
 };
 
 // Copy to Clipboard
