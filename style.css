@@ -721,12 +721,12 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--bg-white);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 2.5rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.75rem;
+  gap: 1.25rem;
   max-width: 420px;
   width: 100%;
   transition: box-shadow 0.3s ease;
@@ -743,7 +743,7 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: var(--radius);
   border: none;
   width: 100%;
-  max-width: 720px;
+  max-width: 360px;
   aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
