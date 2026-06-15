@@ -739,7 +739,7 @@ input[type="range"]::-webkit-slider-thumb {
 /* ── QR Wrapper ── */
 .qr-wrapper {
   background: #ffffff;
-  padding: 1.25rem;
+  padding: 0;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   width: 100%;
