@@ -41,6 +41,7 @@
   "label-hide-dots": "로고 뒤 도트 숨기기",
   "label-logo-size": "로고 크기: ",
   "btn-clear-logo": "로고 제거",
+  "btn-clear-bg": "배경 제거",
   "footer-privacy": "<strong>로컬 개인정보 보호:</strong> QR 데이터와 파일은 브라우저 안에 보관됩니다.",
   "btn-donate-text": "기부로 지원하기",
   "btn-download-svg": "SVG",

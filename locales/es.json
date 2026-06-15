@@ -41,6 +41,7 @@
   "label-hide-dots": "Ocultar puntos detrás del logo",
   "label-logo-size": "Tamaño del logo: ",
   "btn-clear-logo": "Quitar Logo",
+  "btn-clear-bg": "Quitar fondo",
   "footer-privacy": "<strong>Privacidad local:</strong> Tus datos del QR y archivos se quedan en tu navegador.",
   "btn-donate-text": "Apoyar con una donación",
   "btn-download-svg": "SVG",

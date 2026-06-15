@@ -139,6 +139,7 @@ const dotStyleInput = document.getElementById("dot-style");
 const bgColorInput = document.getElementById("bg-color");
 const bgTransparentInput = document.getElementById("bg-transparent");
 const bgImageFileInput = document.getElementById("bg-image-file");
+const clearBgImageBtn = document.getElementById("clear-bg-image");
 
 // Corner elements
 const cornerSquareStyle = document.getElementById("corner-square-style");
@@ -298,6 +299,11 @@ const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "canvas", margin)
     return new QRCodeStyling(getQrConfig(size, renderType, margin));
 };
 
+const resetBackgroundImage = () => {
+    currentBgImage = "";
+    bgImageFileInput.value = "";
+};
+
 // Update function
 const updateQR = () => {
     // Recreate instance on every update for clean rendering
@@ -377,9 +383,15 @@ bgImageFileInput.addEventListener("change", (e) => {
     const reader = new FileReader();
     reader.onload = (event) => {
         currentBgImage = event.target.result;
+        bgTransparentInput.checked = false;
         updateQR();
     };
     reader.readAsDataURL(file);
+});
+
+clearBgImageBtn.addEventListener("click", () => {
+    resetBackgroundImage();
+    updateQR();
 });
 
 clearLogoBtn.addEventListener("click", () => {
@@ -507,9 +519,8 @@ void renderPresetSwatches();
 
 const resetPresetAssets = () => {
     currentLogo = "";
-    currentBgImage = "";
     logoFileInput.value = "";
-    bgImageFileInput.value = "";
+    resetBackgroundImage();
     fileLabel.querySelector('span').textContent = t("btn-upload-logo") || "Subir Logo";
 };
 
@@ -861,6 +872,7 @@ const saveToHistory = (manual = false) => {
         style: dotStyleInput.value,
         bg: bgColorInput.value,
         trans: bgTransparentInput.checked,
+        bgImage: currentBgImage,
         cornerColor: cornerColorInput.value,
         sq: cornerSquareStyle.value,
         dt: cornerDotStyle.value,
@@ -877,7 +889,7 @@ const saveToHistory = (manual = false) => {
     }
 
     // Prevent duplicates in configuration details
-    const duplicate = history.find(item => item.data === config.data && item.dotColor === config.dotColor && item.bg === config.bg && item.logo === config.logo);
+    const duplicate = history.find(item => item.data === config.data && item.dotColor === config.dotColor && item.bg === config.bg && item.bgImage === config.bgImage && item.logo === config.logo);
     if (duplicate) return;
 
     history.unshift(config);
@@ -1105,6 +1117,8 @@ const loadHistoryItem = (item) => {
     dotStyleInput.value = item.style;
     bgColorInput.value = item.bg;
     bgTransparentInput.checked = item.trans;
+    currentBgImage = item.bgImage || "";
+    bgImageFileInput.value = "";
     cornerColorInput.value = item.cornerColor;
     cornerSquareStyle.value = item.sq;
     cornerDotStyle.value = item.dt;

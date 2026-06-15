@@ -41,6 +41,7 @@
   "label-hide-dots": "ロゴの背後のドットを非表示にする",
   "label-logo-size": "ロゴサイズ: ",
   "btn-clear-logo": "ロゴを削除",
+  "btn-clear-bg": "背景を削除",
   "footer-privacy": "<strong>ローカル処理:</strong> QRデータとファイルはブラウザ内に保持されます。",
   "btn-donate-text": "寄付で支援する",
   "btn-download-svg": "SVG",

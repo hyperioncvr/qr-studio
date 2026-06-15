@@ -41,6 +41,7 @@
   "label-hide-dots": "隐藏 Logo 后面的点",
   "label-logo-size": "Logo 大小: ",
   "btn-clear-logo": "移除 Logo",
+  "btn-clear-bg": "移除背景",
   "footer-privacy": "<strong>本地隐私:</strong> 您的二维码数据和文件都会保留在浏览器中。",
   "btn-donate-text": "支持捐赠",
   "btn-download-svg": "SVG",
