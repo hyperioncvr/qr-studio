@@ -370,6 +370,14 @@ const applyQuietZoneToSvgText = (svgText, bgColor) => {
     background.setAttribute("shape-rendering", "crispEdges");
     svg.insertBefore(background, svg.firstChild);
 
+    modules.forEach((node) => {
+        if (node.getAttribute("stroke")) return;
+        node.setAttribute("stroke", bgColor);
+        node.setAttribute("stroke-width", "1.5");
+        node.setAttribute("stroke-linejoin", "round");
+        node.setAttribute("vector-effect", "non-scaling-stroke");
+    });
+
     return new XMLSerializer().serializeToString(svg);
 };
 
