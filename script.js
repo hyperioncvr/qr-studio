@@ -166,6 +166,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 300;
 const PRESET_SWATCH_SIZE = 120;
 const presetSwatchUrls = [];
+const QR_PREVIEW_MARGIN = 10;
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
 const getPresetQrMargin = (size) => Math.max(4, Math.round(size * 0.08));
@@ -237,7 +238,7 @@ const updateHexDisplays = () => {
     if (bgColorHex) bgColorHex.textContent = bgColorInput.value;
 };
 
-const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
+const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg", margin = getQrMargin(size)) => {
     // Toggle class based on style for crisp edges on square modules
     if (dotStyleInput.value === "square") {
         qrElement.classList.add("style-square");
@@ -272,7 +273,7 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
         width: size,
         height: size,
         type: renderType,
-        margin: getQrMargin(size),
+        margin: margin,
         data: getCompiledQRData() || " ",
         dotsOptions: dotsOptions,
         backgroundOptions: backgroundOptions,
@@ -293,8 +294,8 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
     };
 };
 
-const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "canvas") => {
-    return new QRCodeStyling(getQrConfig(size, renderType));
+const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "canvas", margin) => {
+    return new QRCodeStyling(getQrConfig(size, renderType, margin));
 };
 
 // Update function
@@ -302,7 +303,7 @@ const updateQR = () => {
     // Recreate instance on every update for clean rendering
     qrElement.innerHTML = "";
 
-    qrCode = createQrInstance(QR_PREVIEW_SIZE, "canvas");
+    qrCode = createQrInstance(QR_PREVIEW_SIZE, "canvas", QR_PREVIEW_MARGIN);
 
     qrCode.append(qrElement);
 
