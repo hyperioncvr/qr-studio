@@ -425,6 +425,53 @@ const presets = {
     }
 };
 
+const buildPresetQrConfig = (preset, size = 38) => ({
+    width: size,
+    height: size,
+    type: "svg",
+    margin: Math.max(3, Math.round(size * 0.08)),
+    data: "https://qr-studio.app",
+    dotsOptions: {
+        type: preset.style,
+        roundSize: preset.style !== "square",
+        color: preset.dot,
+        gradient: preset.grad !== "none" ? {
+            type: preset.grad,
+            rotation: 0,
+            colorStops: [
+                { offset: 0, color: preset.dot },
+                { offset: 1, color: preset.dot2 }
+            ]
+        } : null
+    },
+    backgroundOptions: {
+        color: preset.trans ? "transparent" : preset.bg
+    },
+    cornersSquareOptions: {
+        type: preset.sq,
+        color: preset.corner
+    },
+    cornersDotOptions: {
+        type: preset.dt,
+        color: preset.corner
+    },
+    image: ""
+});
+
+const renderPresetSwatches = () => {
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        const preset = presets[btn.dataset.preset];
+        const swatch = btn.querySelector('.preset-swatch');
+        if (!preset || !swatch) return;
+
+        swatch.replaceChildren();
+        const presetQr = new QRCodeStyling(buildPresetQrConfig(preset));
+        presetQr.append(swatch);
+    });
+};
+
+renderPresetSwatches();
+
 
 document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
