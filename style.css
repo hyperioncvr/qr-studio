@@ -756,9 +756,9 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 #qrcode {
-  width: min(100%, 300px);
-  height: min(100vw - 7rem, 300px);
-  max-height: 300px;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -164,7 +164,7 @@ let currentBgImage = "";
 let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 300;
-const PRESET_SWATCH_SIZE = 44;
+const PRESET_SWATCH_SIZE = 120;
 const presetSwatchUrls = [];
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
@@ -293,7 +293,7 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
     };
 };
 
-const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
+const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "canvas") => {
     return new QRCodeStyling(getQrConfig(size, renderType));
 };
 
@@ -302,7 +302,7 @@ const updateQR = () => {
     // Recreate instance on every update for clean rendering
     qrElement.innerHTML = "";
 
-    qrCode = createQrInstance();
+    qrCode = createQrInstance(QR_PREVIEW_SIZE, "canvas");
 
     qrCode.append(qrElement);
 
@@ -438,10 +438,10 @@ const presets = {
     }
 };
 
-const buildPresetQrConfig = (preset, size = 38) => ({
+const buildPresetQrConfig = (preset, size = PRESET_SWATCH_SIZE, renderType = "canvas") => ({
     width: size,
     height: size,
-    type: "svg",
+    type: renderType,
     margin: getPresetQrMargin(size),
     data: "https://hypstudio.cl",
     dotsOptions: {
@@ -485,8 +485,8 @@ const renderPresetSwatches = async () => {
 
         swatch.replaceChildren();
         try {
-            const presetQr = new QRCodeStyling(buildPresetQrConfig(preset, PRESET_SWATCH_SIZE));
-            const blob = await presetQr.getRawData("svg");
+            const presetQr = new QRCodeStyling(buildPresetQrConfig(preset, PRESET_SWATCH_SIZE, "canvas"));
+            const blob = await presetQr.getRawData("png");
             const url = URL.createObjectURL(blob);
             presetSwatchUrls.push(url);
 
@@ -610,7 +610,7 @@ const triggerBlobDownload = (blob, filename) => {
 
 const downloadQr = async (ext) => {
     const options = getDownloadOptions(ext);
-    const exportQr = createQrInstance(options.width, "svg");
+    const exportQr = createQrInstance(options.width, ext === "svg" ? "svg" : "canvas");
     const blob = await exportQr.getRawData(ext);
     triggerBlobDownload(blob, `${options.name}.${options.extension}`);
 };
@@ -629,7 +629,7 @@ document.getElementById("download-png").addEventListener("click", () => {
 });
 
 const getQrBlobForClipboard = async () => {
-    const copyQr = createQrInstance(1200, "svg");
+    const copyQr = createQrInstance(1200, "canvas");
     return await copyQr.getRawData("png");
 };
 
