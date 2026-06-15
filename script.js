@@ -304,16 +304,35 @@ const resetBackgroundImage = () => {
     bgImageFileInput.value = "";
 };
 
+const previewObjectUrls = [];
+
+const revokePreviewObjectUrls = () => {
+    while (previewObjectUrls.length) {
+        URL.revokeObjectURL(previewObjectUrls.pop());
+    }
+};
+
+const renderPreview = async () => {
+    revokePreviewObjectUrls();
+
+    const exportQr = createQrInstance(QR_PREVIEW_SIZE, "svg", QR_PREVIEW_MARGIN);
+    const blob = await exportQr.getRawData("svg");
+    const url = URL.createObjectURL(blob);
+    previewObjectUrls.push(url);
+
+    qrElement.replaceChildren();
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = "Vista previa del código QR";
+    img.decoding = "async";
+    img.draggable = false;
+    qrElement.appendChild(img);
+};
+
 // Update function
 const updateQR = () => {
-    // Recreate instance on every update for clean rendering
-    qrElement.innerHTML = "";
+    void renderPreview();
 
-    qrCode = createQrInstance(QR_PREVIEW_SIZE, "svg", QR_PREVIEW_MARGIN);
-
-    qrCode.append(qrElement);
-
-    // Dynamically style the wrapper to match QR background
     const qrWrapper = document.querySelector('.qr-wrapper');
     if (qrWrapper) {
         if (bgTransparentInput.checked) {

@@ -743,30 +743,34 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: var(--radius);
   border: none;
   width: 100%;
-  max-width: 340px;
+  max-width: 300px;
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
   margin: 0 auto;
   transition: background-color 0.35s ease;
+  overflow: hidden;
 }
 
 #qrcode {
   width: 100%;
-  max-width: 300px;
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+#qrcode img,
 #qrcode svg,
-#qrcode canvas,
-#qrcode img {
+#qrcode canvas {
   width: 100% !important;
-  height: auto !important;
+  height: 100% !important;
   max-width: 100% !important;
+  max-height: 100% !important;
   display: block;
+  object-fit: contain;
 }
 
 /* ── Action Buttons ── */
