@@ -164,8 +164,17 @@ let currentBgImage = "";
 let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 300;
+const PRESET_SWATCH_SIZE = 44;
+const presetSwatchUrls = [];
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
+const getPresetQrMargin = (size) => Math.max(4, Math.round(size * 0.08));
+
+const revokePresetSwatchUrls = () => {
+    while (presetSwatchUrls.length) {
+        URL.revokeObjectURL(presetSwatchUrls.pop());
+    }
+};
 
 // Tab Logic
 const tabs = document.querySelectorAll('.tab-btn');
@@ -255,7 +264,7 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
     const backgroundOptions = {
         color: bgTransparentInput.checked ? "transparent" : bgColorInput.value
     };
-    if (currentBgImage) {
+    if (currentBgImage && !bgTransparentInput.checked) {
         backgroundOptions.image = currentBgImage;
     }
 
@@ -284,12 +293,16 @@ const getQrConfig = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
     };
 };
 
+const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "svg") => {
+    return new QRCodeStyling(getQrConfig(size, renderType));
+};
+
 // Update function
 const updateQR = () => {
     // Recreate instance on every update for clean rendering
     qrElement.innerHTML = "";
 
-    qrCode = new QRCodeStyling(getQrConfig());
+    qrCode = createQrInstance();
 
     qrCode.append(qrElement);
 
@@ -429,8 +442,8 @@ const buildPresetQrConfig = (preset, size = 38) => ({
     width: size,
     height: size,
     type: "svg",
-    margin: Math.max(3, Math.round(size * 0.08)),
-    data: "https://qr-studio.app",
+    margin: getPresetQrMargin(size),
+    data: "https://hypstudio.cl",
     dotsOptions: {
         type: preset.style,
         roundSize: preset.style !== "square",
@@ -458,19 +471,46 @@ const buildPresetQrConfig = (preset, size = 38) => ({
     image: ""
 });
 
-const renderPresetSwatches = () => {
+const renderPresetSwatches = async () => {
+    revokePresetSwatchUrls();
+
     document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    for (const btn of document.querySelectorAll('.preset-btn')) {
         const preset = presets[btn.dataset.preset];
         const swatch = btn.querySelector('.preset-swatch');
-        if (!preset || !swatch) return;
+        if (!preset || !swatch) continue;
 
         swatch.replaceChildren();
-        const presetQr = new QRCodeStyling(buildPresetQrConfig(preset));
-        presetQr.append(swatch);
-    });
+        try {
+            const presetQr = new QRCodeStyling(buildPresetQrConfig(preset, PRESET_SWATCH_SIZE));
+            const blob = await presetQr.getRawData("svg");
+            const url = URL.createObjectURL(blob);
+            presetSwatchUrls.push(url);
+
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "";
+            img.decoding = "async";
+            img.loading = "lazy";
+            swatch.appendChild(img);
+        } catch (err) {
+            console.error("Error rendering preset swatch:", err);
+        }
+    }
 };
 
-renderPresetSwatches();
+void renderPresetSwatches();
+
+const resetPresetAssets = () => {
+    currentLogo = "";
+    currentBgImage = "";
+    logoFileInput.value = "";
+    bgImageFileInput.value = "";
+    fileLabel.querySelector('span').textContent = t("btn-upload-logo") || "Subir Logo";
+};
 
 
 document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -481,6 +521,8 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
 
         const p = presets[btn.dataset.preset];
         if (!p) return;
+
+        resetPresetAssets();
 
         dotColorInput.value = p.dot;
         dotColor2Input.value = p.dot2;
@@ -555,65 +597,40 @@ const getDownloadOptions = (ext) => {
     };
 };
 
-const downloadQr = (ext) => {
-    const options = getDownloadOptions(ext);
-    const exportType = ext === "svg" ? "svg" : "svg";
-    const exportQr = new QRCodeStyling(getQrConfig(options.width, exportType));
-    exportQr.download(options);
+const triggerBlobDownload = (blob, filename) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
 };
 
-document.getElementById("download-svg").addEventListener("click", () => downloadQr("svg"));
-document.getElementById("download-png").addEventListener("click", () => downloadQr("png"));
+const downloadQr = async (ext) => {
+    const options = getDownloadOptions(ext);
+    const exportQr = createQrInstance(options.width, "svg");
+    const blob = await exportQr.getRawData(ext);
+    triggerBlobDownload(blob, `${options.name}.${options.extension}`);
+};
+
+document.getElementById("download-svg").addEventListener("click", () => {
+    downloadQr("svg").catch((err) => {
+        console.error("SVG export error:", err);
+        alert("No se pudo exportar el SVG.");
+    });
+});
+document.getElementById("download-png").addEventListener("click", () => {
+    downloadQr("png").catch((err) => {
+        console.error("PNG export error:", err);
+        alert("No se pudo exportar el PNG.");
+    });
+});
 
 const getQrBlobForClipboard = async () => {
-    const canvas = qrElement.querySelector("canvas");
-    if (canvas) {
-        return await new Promise((resolve, reject) => {
-            canvas.toBlob((blob) => {
-                if (blob) {
-                    resolve(blob);
-                } else {
-                    reject(new Error("canvas-blob-error"));
-                }
-            });
-        });
-    }
-
-    const svgElement = qrElement.querySelector("svg");
-    if (!svgElement) {
-        throw new Error("qr-not-rendered");
-    }
-
-    const svgMarkup = new XMLSerializer().serializeToString(svgElement);
-    const svgBlob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
-    const svgUrl = URL.createObjectURL(svgBlob);
-
-    try {
-        const image = await new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = () => reject(new Error("svg-render-error"));
-            img.src = svgUrl;
-        });
-
-        const canvasForCopy = document.createElement("canvas");
-        canvasForCopy.width = image.width;
-        canvasForCopy.height = image.height;
-        const ctx = canvasForCopy.getContext("2d");
-        ctx.drawImage(image, 0, 0);
-
-        return await new Promise((resolve, reject) => {
-            canvasForCopy.toBlob((blob) => {
-                if (blob) {
-                    resolve(blob);
-                } else {
-                    reject(new Error("svg-blob-error"));
-                }
-            });
-        });
-    } finally {
-        URL.revokeObjectURL(svgUrl);
-    }
+    const copyQr = createQrInstance(1200, "svg");
+    return await copyQr.getRawData("png");
 };
 
 // Copy to Clipboard
