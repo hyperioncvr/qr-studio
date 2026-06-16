@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-studio-v1.5';
+const CACHE_NAME = 'qr-studio-v1.6';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,8 @@ const ASSETS = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  './vendor/qr-code-styling.js',
+  './vendor/jsQR.js',
   './locales/es.json',
   './locales/en.json',
   './locales/zh.json',
@@ -24,7 +26,7 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(ASSETS))
+      .then((cache) => Promise.allSettled(ASSETS.map((asset) => cache.add(asset))))
       .then(() => self.skipWaiting())
   );
 });

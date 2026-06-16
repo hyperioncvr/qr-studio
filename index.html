@@ -10,14 +10,11 @@
     <!-- Baidu Mobile Friendly Optimization -->
     <meta name="applicable-device" content="pc,mobile">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-512.png">
     <meta name="theme-color" content="#1e293b">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://formsubmit.co; script-src 'self' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://formsubmit.co; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:;">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
@@ -70,12 +67,9 @@
     </script>
 
     <script type="text/javascript"
-      src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"
-      integrity="sha384-CHvehSuS0IW8Qj9IlAETJXbHf/SEi62VXMgODXi9p3CC3NUIuThj1Y0uAFnl30VB"
-      crossorigin="anonymous"></script>
+      src="./vendor/qr-code-styling.js"></script>
     <script type="text/javascript"
-      src="https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"
-      crossorigin="anonymous"></script>
+      src="./vendor/jsQR.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -469,7 +463,7 @@
             </div>
 
             <footer class="sidebar-footer">
-                <p data-i18n="footer-privacy"><strong>Privacidad local:</strong> Tus datos del QR y archivos se quedan en tu navegador.</p>
+                <p data-i18n="footer-privacy-notice"><strong>Privacidad local para generar QR:</strong> El contenido, historial y archivos del QR se procesan en tu navegador. Los formularios de contacto y donación usan servicios externos opcionales.</p>
                 <div class="footer-credits">
                     <p>By <strong>Hypstudio</strong> — Christian Vergara</p>
                     <button id="donate-btn" class="btn-donate">

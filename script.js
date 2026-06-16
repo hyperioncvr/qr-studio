@@ -1,13 +1,16 @@
 let qrCode;
 
 // ─── i18n State & Dynamic Loading ──────────────────────────
+const DEFAULT_LANGUAGE = "en";
 const SUPPORTED_LANGUAGES = ["es", "en", "zh", "ar", "ru", "de", "it", "pl", "pt", "fr", "ja", "ko"];
 const activeTranslations = {};
 
 // Translation helper to get keys synchronously from loaded language
 const t = (key) => {
-    const currentLang = localStorage.getItem("qr_studio_lang") || "en";
-    return (activeTranslations[currentLang] || {})[key] || "";
+    const currentLang = localStorage.getItem("qr_studio_lang") || DEFAULT_LANGUAGE;
+    return (activeTranslations[currentLang] || {})[key]
+        || (activeTranslations[DEFAULT_LANGUAGE] || {})[key]
+        || "";
 };
 
 const setLanguage = async (lang) => {
@@ -40,6 +43,17 @@ const setLanguage = async (lang) => {
         }
     }
 
+    if (lang !== DEFAULT_LANGUAGE && !activeTranslations[DEFAULT_LANGUAGE]) {
+        try {
+            const fallbackResponse = await fetch(`./locales/${DEFAULT_LANGUAGE}.json`);
+            if (fallbackResponse.ok) {
+                activeTranslations[DEFAULT_LANGUAGE] = await fallbackResponse.json();
+            }
+        } catch (err) {
+            console.warn("Could not load fallback locale:", err);
+        }
+    }
+
     const trans = activeTranslations[lang];
 
     // Update dynamic header metadata for localized SEO
@@ -67,7 +81,7 @@ const setLanguage = async (lang) => {
     document.querySelectorAll("[data-i18n]").forEach(elem => {
         const key = elem.getAttribute("data-i18n");
         if (trans[key]) {
-            if (key === "footer-privacy") {
+            if (key === "footer-privacy" || key === "footer-privacy-notice") {
                 elem.innerHTML = trans[key];
             } else {
                 elem.textContent = trans[key];
@@ -298,6 +312,20 @@ const createQrInstance = (size = QR_PREVIEW_SIZE, renderType = "svg", margin) =>
     return new QRCodeStyling(getQrConfig(size, renderType, margin));
 };
 
+const showLocalizedAlert = (key, fallback) => {
+    alert(t(key) || fallback);
+};
+
+const supportsClipboardImageWrite = () => {
+    return typeof ClipboardItem !== "undefined"
+        && !!navigator.clipboard
+        && typeof navigator.clipboard.write === "function";
+};
+
+const supportsClipboardTextWrite = () => {
+    return !!navigator.clipboard && typeof navigator.clipboard.writeText === "function";
+};
+
 const resetBackgroundImage = () => {
     currentBgImage = "";
     bgImageFileInput.value = "";
@@ -427,7 +455,7 @@ logoFileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-        alert(t("file-size-error") || "El archivo excede el límite de 5 MB.");
+        showLocalizedAlert("file-size-error", "El archivo excede el límite de 5 MB.");
         e.target.value = "";
         return;
     }
@@ -445,7 +473,7 @@ bgImageFileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > MAX_FILE_SIZE) {
-        alert(t("file-size-error") || "El archivo excede el límite de 5 MB.");
+        showLocalizedAlert("file-size-error", "El archivo excede el límite de 5 MB.");
         e.target.value = "";
         return;
     }
@@ -758,13 +786,13 @@ const rasterizeSvgToPng = async (svgText, size) => {
 document.getElementById("download-svg").addEventListener("click", () => {
     downloadQr("svg").catch((err) => {
         console.error("SVG export error:", err);
-        alert("No se pudo exportar el SVG.");
+        showLocalizedAlert("export-svg-error", "No se pudo exportar el SVG.");
     });
 });
 document.getElementById("download-png").addEventListener("click", () => {
     downloadQr("png").catch((err) => {
         console.error("PNG export error:", err);
-        alert("No se pudo exportar el PNG.");
+        showLocalizedAlert("export-png-error", "No se pudo exportar el PNG.");
     });
 });
 
@@ -783,6 +811,9 @@ document.getElementById("copy-qr").addEventListener("click", async () => {
     const originalText = span ? span.textContent : "Copiar";
 
     try {
+        if (!supportsClipboardImageWrite()) {
+            throw new Error("clipboard-image-unsupported");
+        }
         const blob = await getQrBlobForClipboard();
         const data = [new ClipboardItem({ [blob.type]: blob })];
         await navigator.clipboard.write(data);
@@ -797,7 +828,7 @@ document.getElementById("copy-qr").addEventListener("click", async () => {
         }, 2000);
     } catch (err) {
         console.error("Error al copiar:", err);
-        alert(t("copy-error") || "Tu navegador no soporta la copia directa. Intenta descargar el PNG.");
+        showLocalizedAlert("copy-error", "Tu navegador no soporta la copia directa. Intenta descargar el PNG.");
     }
 });
 
@@ -925,7 +956,7 @@ if (scanFileInput) {
                 if (code) {
                     handleScanResult(code.data);
                 } else {
-                    scanStatus.textContent = "No se detectó ningún código QR en la imagen.";
+                    scanStatus.textContent = t("scan-no-code-found") || "No se detectó ningún código QR en la imagen.";
                     scanStatus.style.display = "block";
                     scanStatus.className = "scan-status error";
                     scanResultWrapper.style.display = "none";
@@ -940,6 +971,9 @@ if (scanFileInput) {
 if (scanCopyBtn) {
     scanCopyBtn.addEventListener("click", async () => {
         try {
+            if (!supportsClipboardTextWrite()) {
+                throw new Error("clipboard-text-unsupported");
+            }
             await navigator.clipboard.writeText(scanResult.value);
             const span = scanCopyBtn.querySelector("span");
             const originalText = span.textContent;
@@ -951,6 +985,7 @@ if (scanCopyBtn) {
             }, 2000);
         } catch (err) {
             console.error(err);
+            showLocalizedAlert("copy-error", "Tu navegador no soporta la copia directa. Intenta descargar el PNG.");
         }
     });
 }
@@ -981,7 +1016,7 @@ if (scanImportBtn) {
         if (contentSection) contentSection.classList.add('active');
         
         updateQR();
-        alert("Texto importado al editor de contenido.");
+        showLocalizedAlert("imported-to-editor", "Texto importado al editor de contenido.");
     });
 }
 
@@ -1139,7 +1174,7 @@ const renderHistory = () => {
         const loadBtn = document.createElement("button");
         loadBtn.type = "button";
         loadBtn.className = "history-btn-load";
-        loadBtn.title = "Cargar";
+        loadBtn.title = t("history-action-load") || "Cargar";
         loadBtn.style.background = "var(--input-bg)";
         loadBtn.style.border = "1px solid var(--border)";
         loadBtn.style.borderRadius = "4px";
@@ -1156,7 +1191,7 @@ const renderHistory = () => {
         const deleteBtn = document.createElement("button");
         deleteBtn.type = "button";
         deleteBtn.className = "history-btn-del";
-        deleteBtn.title = "Eliminar";
+        deleteBtn.title = t("history-action-delete") || "Eliminar";
         deleteBtn.style.background = "var(--input-bg)";
         deleteBtn.style.border = "1px solid var(--border)";
         deleteBtn.style.borderRadius = "4px";
@@ -1258,13 +1293,13 @@ const loadHistoryItem = (item) => {
     hideLogoDots.checked = item.hideDots !== false;
 
     if (currentLogo) {
-        fileLabel.querySelector('span').textContent = "Logo cargado";
+        fileLabel.querySelector('span').textContent = t("logo-loaded") || "Logo cargado";
     } else {
-        fileLabel.querySelector('span').textContent = "Subir Logo";
+        fileLabel.querySelector('span').textContent = t("btn-upload-logo") || "Subir Logo";
     }
 
     updateQR();
-    alert("Diseño del historial cargado con éxito.");
+    showLocalizedAlert("history-loaded", "Diseño del historial cargado con éxito.");
 };
 
 const deleteHistoryItem = (id) => {
@@ -1282,7 +1317,7 @@ const deleteHistoryItem = (id) => {
 const historyClearBtn = document.getElementById("history-clear-btn");
 if (historyClearBtn) {
     historyClearBtn.addEventListener("click", () => {
-        if (confirm("¿Estás seguro de que quieres limpiar todo tu historial local?")) {
+        if (confirm(t("history-clear-confirm") || "¿Estás seguro de que quieres limpiar todo tu historial local?")) {
             localStorage.removeItem("qr_studio_history");
             renderHistory();
         }
