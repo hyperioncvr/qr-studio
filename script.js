@@ -323,8 +323,8 @@ const getSvgShapeRendering = () => {
     return dotStyleInput.value === "square" ? "crispEdges" : "geometricPrecision";
 };
 
-const expandSquareModuleRects = (svg) => {
-    if (dotStyleInput.value !== "square") return;
+const expandModuleRects = (svg) => {
+    if (dotStyleInput.value === "dots") return;
 
     const rects = svg.querySelectorAll("rect");
     const overlap = 0.2;
@@ -376,7 +376,7 @@ const normalizeSvgText = (svgText) => {
         svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     }
     svg.setAttribute("shape-rendering", getSvgShapeRendering());
-    expandSquareModuleRects(svg);
+    expandModuleRects(svg);
 
     return new XMLSerializer().serializeToString(svg);
 };
@@ -618,13 +618,33 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
     });
 });
 
+const syncCornersWithDotStyle = () => {
+    const style = dotStyleInput.value;
+    if (style === "square") {
+        cornerSquareStyle.value = "square";
+        cornerDotStyle.value = "square";
+        return;
+    }
+    if (style === "dots") {
+        cornerSquareStyle.value = "dot";
+        cornerDotStyle.value = "dot";
+        return;
+    }
+    cornerSquareStyle.value = "extra-rounded";
+    cornerDotStyle.value = "dot";
+};
+
 // Event listeners — use debounced update for high-frequency inputs
 [urlInput, dotColorInput, dotColor2Input, bgColorInput, cornerColorInput, logoSizeInput].forEach(input => {
     input.addEventListener("input", debouncedUpdate);
 });
 // Immediate update for discrete selectors/checkboxes
-[dotGradientType, dotStyleInput, bgTransparentInput, cornerSquareStyle, cornerDotStyle, hideLogoDots].forEach(input => {
+[dotGradientType, bgTransparentInput, cornerSquareStyle, cornerDotStyle, hideLogoDots].forEach(input => {
     input.addEventListener("input", updateQR);
+});
+dotStyleInput.addEventListener("input", () => {
+    syncCornersWithDotStyle();
+    updateQR();
 });
 
 // Content Type Dropdown toggle logic
