@@ -365,6 +365,13 @@ const normalizeSvgText = (svgText) => {
     if (!svg.getAttribute("xmlns")) {
         svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     }
+    if (!svg.getAttribute("viewBox")) {
+        const width = parseFloat(svg.getAttribute("width") || "0");
+        const height = parseFloat(svg.getAttribute("height") || "0");
+        if (Number.isFinite(width) && Number.isFinite(height) && width > 0 && height > 0) {
+            svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        }
+    }
     if (!svg.getAttribute("preserveAspectRatio")) {
         svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
     }
