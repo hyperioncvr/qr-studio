@@ -1,0 +1,8 @@
+{
+  "name": "qr-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "check": "node --check script.js && node --check sw.js && node scripts/audit.mjs"
+  }
+}

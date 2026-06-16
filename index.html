@@ -20,28 +20,28 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="QR Studio — QR Gratis">
     <meta property="og:description" content="Generador de códigos QR con diseño premium 100% gratis, sin suscripción ni registro. Exportación vectorial en SVG y privacidad absoluta.">
-    <meta property="og:image" content="icon-512.png">
+    <meta property="og:image" content="https://qr-studio-ochre.vercel.app/icon-512.png">
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:title" content="QR Studio — QR Gratis">
     <meta property="twitter:description" content="Generador premium de códigos QR. Libre, privado, 100% gratis y sin suscripción.">
-    <meta property="twitter:image" content="icon-512.png">
+    <meta property="twitter:image" content="https://qr-studio-ochre.vercel.app/icon-512.png">
 
-    <link rel="canonical" href="https://hyperioncvr.github.io/qr-studio/">
+    <link rel="canonical" href="https://qr-studio-ochre.vercel.app/">
 
     <!-- Multi-language Alternate Indexing (SEO hreflang) -->
-    <link rel="alternate" hreflang="es" href="https://hyperioncvr.github.io/qr-studio/?lang=es">
-    <link rel="alternate" hreflang="en" href="https://hyperioncvr.github.io/qr-studio/?lang=en">
-    <link rel="alternate" hreflang="zh" href="https://hyperioncvr.github.io/qr-studio/?lang=zh">
-    <link rel="alternate" hreflang="ar" href="https://hyperioncvr.github.io/qr-studio/?lang=ar">
-    <link rel="alternate" hreflang="ru" href="https://hyperioncvr.github.io/qr-studio/?lang=ru">
-    <link rel="alternate" hreflang="de" href="https://hyperioncvr.github.io/qr-studio/?lang=de">
-    <link rel="alternate" hreflang="it" href="https://hyperioncvr.github.io/qr-studio/?lang=it">
-    <link rel="alternate" hreflang="pl" href="https://hyperioncvr.github.io/qr-studio/?lang=pl">
-    <link rel="alternate" hreflang="pt" href="https://hyperioncvr.github.io/qr-studio/?lang=pt">
-    <link rel="alternate" hreflang="fr" href="https://hyperioncvr.github.io/qr-studio/?lang=fr">
-    <link rel="alternate" hreflang="ja" href="https://hyperioncvr.github.io/qr-studio/?lang=ja">
-    <link rel="alternate" hreflang="ko" href="https://hyperioncvr.github.io/qr-studio/?lang=ko">
-    <link rel="alternate" hreflang="x-default" href="https://hyperioncvr.github.io/qr-studio/">
+    <link rel="alternate" hreflang="es" href="https://qr-studio-ochre.vercel.app/?lang=es">
+    <link rel="alternate" hreflang="en" href="https://qr-studio-ochre.vercel.app/?lang=en">
+    <link rel="alternate" hreflang="zh" href="https://qr-studio-ochre.vercel.app/?lang=zh">
+    <link rel="alternate" hreflang="ar" href="https://qr-studio-ochre.vercel.app/?lang=ar">
+    <link rel="alternate" hreflang="ru" href="https://qr-studio-ochre.vercel.app/?lang=ru">
+    <link rel="alternate" hreflang="de" href="https://qr-studio-ochre.vercel.app/?lang=de">
+    <link rel="alternate" hreflang="it" href="https://qr-studio-ochre.vercel.app/?lang=it">
+    <link rel="alternate" hreflang="pl" href="https://qr-studio-ochre.vercel.app/?lang=pl">
+    <link rel="alternate" hreflang="pt" href="https://qr-studio-ochre.vercel.app/?lang=pt">
+    <link rel="alternate" hreflang="fr" href="https://qr-studio-ochre.vercel.app/?lang=fr">
+    <link rel="alternate" hreflang="ja" href="https://qr-studio-ochre.vercel.app/?lang=ja">
+    <link rel="alternate" hreflang="ko" href="https://qr-studio-ochre.vercel.app/?lang=ko">
+    <link rel="alternate" hreflang="x-default" href="https://qr-studio-ochre.vercel.app/">
 
     <!-- JSON-LD Structured Data for WebApplication -->
     <script type="application/ld+json">
@@ -51,7 +51,7 @@
       "name": "QR Studio",
       "alternateName": "Generador Profesional y Gratis de Códigos QR",
       "description": "Crea códigos QR vectoriales con diseño profesional 100% gratis y sin suscripción. Totalmente privado, procesamiento local y descargas SVG y PNG de alta resolución sin registro.",
-      "url": "https://hyperioncvr.github.io/qr-studio/",
+      "url": "https://qr-studio-ochre.vercel.app/",
       "applicationCategory": "UtilityApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
@@ -108,20 +108,20 @@
                     </select>
                 </div>
             </header>
-            <nav class="tabs">
-                <button class="tab-btn active" data-tab="content">
+            <nav class="tabs" role="tablist" aria-label="QR Studio">
+                <button class="tab-btn active" data-tab="content" role="tab" aria-selected="true" aria-controls="tab-content">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v18m9-9H3"/></svg>
                     <span data-i18n="tab-content">Contenido</span>
                 </button>
-                <button class="tab-btn" data-tab="style">
+                <button class="tab-btn" data-tab="style" role="tab" aria-selected="false" aria-controls="tab-style">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.636-6.364l-1.414 1.414M6.05 17.95l-1.414 1.414m0-12.728l1.414 1.414m11.314 11.314l1.414 1.414"/></svg>
                     <span data-i18n="tab-style">Estilo</span>
                 </button>
-                <button class="tab-btn" data-tab="logo">
+                <button class="tab-btn" data-tab="logo" role="tab" aria-selected="false" aria-controls="tab-logo">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                     <span data-i18n="tab-logo">Logo</span>
                 </button>
-                <button class="tab-btn" data-tab="scan">
+                <button class="tab-btn" data-tab="scan" role="tab" aria-selected="false" aria-controls="tab-scan">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2m-10 0H5a2 2 0 01-2-2v-2M7 12h10"/>
                     </svg>
@@ -130,7 +130,7 @@
             </nav>
 
             <!-- Tab Content: Content -->
-            <div id="tab-content" class="control-section active">
+            <div id="tab-content" class="control-section active" role="tabpanel">
                 <div class="input-group">
                     <label for="content-type-select" data-i18n="label-content-type">Tipo de Contenido</label>
                     <select id="content-type-select">
@@ -239,7 +239,7 @@
             </div>
 
             <!-- Tab Content: Style -->
-            <div id="tab-style" class="control-section">
+            <div id="tab-style" class="control-section" role="tabpanel" hidden>
                 <div class="input-group">
                     <label data-i18n="label-modules">Módulos</label>
                     <div class="color-grid">
@@ -294,7 +294,7 @@
                     </div>
                     <div class="file-upload">
                         <label for="bg-image-file">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
                             <span data-i18n="label-bg-image">Imagen de fondo</span>
                         </label>
                         <input type="file" id="bg-image-file" accept="image/*">
@@ -329,7 +329,7 @@
             </div>
 
             <!-- Tab Content: Logo -->
-            <div id="tab-logo" class="control-section">
+            <div id="tab-logo" class="control-section" role="tabpanel" hidden>
                 <div class="input-group">
                     <label data-i18n="label-center-logo">Logo central</label>
                     <div class="file-upload">
@@ -356,7 +356,7 @@
             </div>
 
             <!-- Tab Content: Scanner -->
-            <div id="tab-scan" class="control-section">
+            <div id="tab-scan" class="control-section" role="tabpanel" hidden>
                 <div class="scanner-container">
                     <div class="scanner-camera-wrapper">
                         <video id="scan-video" playsinline></video>
@@ -481,10 +481,10 @@
                     <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V12"></path><path d="M12 16H12.01"></path></svg>
                     <span data-i18n="badge-no-expire">El código QR no caduca y es ilimitado</span>
                 </div>
-                <div class="info-badge-item clickable" id="contact-trigger">
+                <button type="button" class="info-badge-item clickable" id="contact-trigger">
                     <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
                     <span data-i18n="badge-suggestion">¿Sugerencias o solicitudes? Envíanos un mensaje</span>
-                </div>
+                </button>
             </div>
 
             <div class="preview-card">
@@ -517,20 +517,20 @@
     </div>
 
     <!-- Donation Popup -->
-    <div id="donate-overlay" class="donate-overlay">
-        <div class="donate-popup">
-            <button id="donate-close" class="donate-close">&times;</button>
+    <div id="donate-overlay" class="donate-overlay" aria-hidden="true">
+        <div class="donate-popup" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+            <button type="button" id="donate-close" class="donate-close" aria-label="Cerrar">&times;</button>
             <div class="donate-icon">
                 <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
             </div>
-            <h2 data-i18n="donate-title">Apoya este proyecto</h2>
+            <h2 id="donate-title" data-i18n="donate-title">Apoya este proyecto</h2>
             <p class="donate-desc" data-i18n="donate-description">Si QR Studio te ha sido útil, considera apoyar su desarrollo con una donación voluntaria.</p>
             <div class="donate-amounts">
-                <button class="donate-amount" data-amount="2">$2</button>
-                <button class="donate-amount" data-amount="5">$5</button>
-                <button class="donate-amount active" data-amount="10">$10</button>
-                <button class="donate-amount" data-amount="25">$25</button>
-                <button class="donate-amount" id="donate-other-btn" data-i18n="donate-other">Otro monto</button>
+                <button type="button" class="donate-amount" data-amount="2">$2</button>
+                <button type="button" class="donate-amount" data-amount="5">$5</button>
+                <button type="button" class="donate-amount active" data-amount="10">$10</button>
+                <button type="button" class="donate-amount" data-amount="25">$25</button>
+                <button type="button" class="donate-amount" id="donate-other-btn" data-i18n="donate-other">Otro monto</button>
             </div>
             <div class="donate-custom" id="donate-custom-wrap" style="display: none;">
                 <input type="number" id="donate-custom-input" min="1" data-i18n-placeholder="donate-placeholder" placeholder="Escribe el monto en USD">
@@ -543,13 +543,13 @@
     </div>
 
     <!-- Contact Popup -->
-    <div id="contact-overlay" class="contact-overlay">
-        <div class="contact-popup">
-            <button id="contact-close" class="contact-close">&times;</button>
+    <div id="contact-overlay" class="contact-overlay" aria-hidden="true">
+        <div class="contact-popup" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+            <button type="button" id="contact-close" class="contact-close" aria-label="Cerrar">&times;</button>
             <div class="contact-icon">
                 <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
             </div>
-            <h2 data-i18n="contact-title">Enviar mensaje</h2>
+            <h2 id="contact-title" data-i18n="contact-title">Enviar mensaje</h2>
             <form id="contact-form" class="contact-form">
                 <div class="form-group">
                     <label for="contact-name" data-i18n="contact-label-name">Tu nombre</label>

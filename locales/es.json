@@ -122,5 +122,8 @@
   "res-low": "Baja (300px)",
   "res-std": "Estándar (600px)",
   "res-high": "Alta (1200px)",
-  "res-ultra": "Impresión (2400px)"
+  "res-ultra": "Impresión (2400px)",
+  "qr-render-error": "No se pudo renderizar este código QR. Intenta acortar el contenido.",
+  "history-save-error": "No se pudo guardar el historial local.",
+  "history-assets-not-restored": "Logo/fondo deben subirse nuevamente"
 }

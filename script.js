@@ -5,6 +5,19 @@ const DEFAULT_LANGUAGE = "en";
 const SUPPORTED_LANGUAGES = ["es", "en", "zh", "ar", "ru", "de", "it", "pl", "pt", "fr", "ja", "ko"];
 const activeTranslations = {};
 
+const renderTrustedPrivacyNotice = (elem, value) => {
+    const match = String(value).match(/^<strong>(.*?)<\/strong>\s*(.*)$/);
+    elem.replaceChildren();
+    if (!match) {
+        elem.textContent = value;
+        return;
+    }
+    const strong = document.createElement("strong");
+    strong.textContent = match[1];
+    elem.appendChild(strong);
+    elem.append(` ${match[2]}`);
+};
+
 // Translation helper to get keys synchronously from loaded language
 const t = (key) => {
     const currentLang = localStorage.getItem("qr_studio_lang") || DEFAULT_LANGUAGE;
@@ -55,9 +68,11 @@ const setLanguage = async (lang) => {
     }
 
     const trans = activeTranslations[lang];
+    const fallbackTrans = activeTranslations[DEFAULT_LANGUAGE] || {};
+    const translate = (key) => trans[key] || fallbackTrans[key] || "";
 
     // Update dynamic header metadata for localized SEO
-    const pageTitle = `QR Studio — ${trans["subtitle"] || "QR Gratis"}`;
+    const pageTitle = `QR Studio — ${translate("subtitle") || "QR Gratis"}`;
     document.title = pageTitle;
 
     const ogTitleMeta = document.querySelector('meta[property="og:title"]');
@@ -66,25 +81,26 @@ const setLanguage = async (lang) => {
     const twitterTitleMeta = document.querySelector('meta[property="twitter:title"]');
     if (twitterTitleMeta) twitterTitleMeta.setAttribute("content", pageTitle);
 
-    if (trans["meta-description"]) {
+    if (translate("meta-description")) {
         const descMeta = document.querySelector('meta[name="description"]');
-        if (descMeta) descMeta.setAttribute("content", trans["meta-description"]);
+        if (descMeta) descMeta.setAttribute("content", translate("meta-description"));
 
         const ogDescMeta = document.querySelector('meta[property="og:description"]');
-        if (ogDescMeta) ogDescMeta.setAttribute("content", trans["meta-description"]);
+        if (ogDescMeta) ogDescMeta.setAttribute("content", translate("meta-description"));
 
         const twitterDescMeta = document.querySelector('meta[property="twitter:description"]');
-        if (twitterDescMeta) twitterDescMeta.setAttribute("content", trans["meta-description"]);
+        if (twitterDescMeta) twitterDescMeta.setAttribute("content", translate("meta-description"));
     }
 
     // Update simple text elements
     document.querySelectorAll("[data-i18n]").forEach(elem => {
         const key = elem.getAttribute("data-i18n");
-        if (trans[key]) {
+        const value = translate(key);
+        if (value) {
             if (key === "footer-privacy" || key === "footer-privacy-notice") {
-                elem.innerHTML = trans[key];
+                renderTrustedPrivacyNotice(elem, value);
             } else {
-                elem.textContent = trans[key];
+                elem.textContent = value;
             }
         }
     });
@@ -92,15 +108,16 @@ const setLanguage = async (lang) => {
     // Update placeholder elements
     document.querySelectorAll("[data-i18n-placeholder]").forEach(elem => {
         const key = elem.getAttribute("data-i18n-placeholder");
-        if (trans[key]) {
-            elem.setAttribute("placeholder", trans[key]);
+        const value = translate(key);
+        if (value) {
+            elem.setAttribute("placeholder", value);
         }
     });
 
     // Re-trigger layout or values that are multi-language and calculated (like logo-size text template)
     const logoSizeText = document.querySelector('label[for="logo-size"] span[data-i18n="label-logo-size"]');
     if (logoSizeText) {
-        logoSizeText.textContent = trans["label-logo-size"];
+        logoSizeText.textContent = translate("label-logo-size");
     }
 
     // Update toggle preset button dynamically if language is changed
@@ -108,7 +125,7 @@ const setLanguage = async (lang) => {
     const presetsToggleBtn = document.getElementById("presets-toggle-btn");
     if (presetsGroup && presetsToggleBtn) {
         const isMinimized = presetsGroup.classList.contains("minimized-presets");
-        presetsToggleBtn.textContent = trans[isMinimized ? "presets-show-more" : "presets-show-less"];
+        presetsToggleBtn.textContent = translate(isMinimized ? "presets-show-more" : "presets-show-less");
     }
 
     // Update scan instructions / history texts
@@ -180,7 +197,9 @@ let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 720;
 const PRESET_SWATCH_SIZE = 120;
+const MAX_HISTORY_ITEMS = 15;
 const presetSwatchUrls = [];
+let previewRenderId = 0;
 
 const getQrMargin = (size) => Math.max(16, Math.round(size * 0.08));
 const getPresetQrMargin = (size) => Math.max(4, Math.round(size * 0.08));
@@ -195,6 +214,20 @@ const revokePresetSwatchUrls = () => {
 const tabs = document.querySelectorAll('.tab-btn');
 const sections = document.querySelectorAll('.control-section');
 
+const activateTab = (targetTab) => {
+    tabs.forEach(tab => {
+        const isActive = tab === targetTab;
+        tab.classList.toggle('active', isActive);
+        tab.setAttribute("aria-selected", String(isActive));
+    });
+
+    sections.forEach(section => {
+        const isActive = section.id === `tab-${targetTab.dataset.tab}`;
+        section.classList.toggle('active', isActive);
+        section.hidden = !isActive;
+    });
+};
+
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         // Stop camera if leaving Scanner tab
@@ -202,12 +235,43 @@ tabs.forEach(tab => {
             stopCamera();
         }
 
-        tabs.forEach(t => t.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(`tab-${tab.dataset.tab}`).classList.add('active');
+        activateTab(tab);
     });
 });
+
+const getInputValue = (id) => document.getElementById(id)?.value || "";
+
+const escapeWifiValue = (value) => String(value).replace(/([\\;,:"])/g, "\\$1");
+
+const escapeVCardValue = (value) => String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/\r/g, "")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,");
+
+const foldVCardLine = (line) => {
+    const maxLength = 75;
+    if (line.length <= maxLength) return line;
+    const chunks = [];
+    for (let i = 0; i < line.length; i += maxLength) {
+        chunks.push((i === 0 ? "" : " ") + line.slice(i, i + maxLength));
+    }
+    return chunks.join("\r\n");
+};
+
+const parseMailto = (data) => {
+    try {
+        const url = new URL(data);
+        return {
+            to: decodeURIComponent(url.pathname || ""),
+            subject: url.searchParams.get("subject") || "",
+            body: url.searchParams.get("body") || ""
+        };
+    } catch (err) {
+        return { to: data.split("?")[0].replace("mailto:", ""), subject: "", body: "" };
+    }
+};
 
 // Compiled QR Data Builder
 const getCompiledQRData = () => {
@@ -217,29 +281,44 @@ const getCompiledQRData = () => {
     if (type === "url") {
         return urlInput.value || " ";
     } else if (type === "wifi") {
-        const ssid = document.getElementById("wifi-ssid").value || "";
-        const pass = document.getElementById("wifi-pass").value || "";
-        const sec = document.getElementById("wifi-security").value || "nopass";
-        return `WIFI:S:${ssid};T:${sec};P:${pass};;`;
+        const ssid = getInputValue("wifi-ssid");
+        const pass = getInputValue("wifi-pass");
+        const sec = getInputValue("wifi-security") || "nopass";
+        return `WIFI:T:${sec};S:${escapeWifiValue(ssid)};P:${escapeWifiValue(pass)};;`;
     } else if (type === "vcard") {
-        const fn = document.getElementById("vcard-fn").value || "";
-        const ln = document.getElementById("vcard-ln").value || "";
-        const phone = document.getElementById("vcard-phone").value || "";
-        const email = document.getElementById("vcard-email").value || "";
-        const org = document.getElementById("vcard-org").value || "";
-        const url = document.getElementById("vcard-url").value || "";
-        return `BEGIN:VCARD\nVERSION:3.0\nN:${ln};${fn};;;\nFN:${fn} ${ln}\nTEL;TYPE=CELL:${phone}\nEMAIL:${email}\nORG:${org}\nURL:${url}\nEND:VCARD`;
+        const fn = getInputValue("vcard-fn");
+        const ln = getInputValue("vcard-ln");
+        const phone = getInputValue("vcard-phone");
+        const email = getInputValue("vcard-email");
+        const org = getInputValue("vcard-org");
+        const url = getInputValue("vcard-url");
+        const fullName = `${fn} ${ln}`.trim();
+        return [
+            "BEGIN:VCARD",
+            "VERSION:3.0",
+            `N:${escapeVCardValue(ln)};${escapeVCardValue(fn)};;;`,
+            `FN:${escapeVCardValue(fullName)}`,
+            `TEL;TYPE=CELL:${escapeVCardValue(phone)}`,
+            `EMAIL:${escapeVCardValue(email)}`,
+            `ORG:${escapeVCardValue(org)}`,
+            `URL:${escapeVCardValue(url)}`,
+            "END:VCARD"
+        ].map(foldVCardLine).join("\r\n");
     } else if (type === "email") {
-        const to = document.getElementById("email-to").value || "";
-        const subject = document.getElementById("email-subject").value || "";
-        const body = document.getElementById("email-body").value || "";
-        return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const to = encodeURIComponent(getInputValue("email-to"));
+        const subject = getInputValue("email-subject");
+        const body = getInputValue("email-body");
+        const params = new URLSearchParams();
+        if (subject) params.set("subject", subject);
+        if (body) params.set("body", body);
+        const query = params.toString();
+        return `mailto:${to}${query ? `?${query}` : ""}`;
     } else if (type === "sms") {
-        const phone = document.getElementById("sms-phone").value || "";
-        const msg = document.getElementById("sms-message").value || "";
+        const phone = getInputValue("sms-phone");
+        const msg = getInputValue("sms-message");
         return `SMSTO:${phone}:${msg}`;
     } else if (type === "phone") {
-        const num = document.getElementById("phone-number").value || "";
+        const num = getInputValue("phone-number");
         return `tel:${num}`;
     }
     return " ";
@@ -421,14 +500,25 @@ const createPreviewSvg = async () => {
 };
 
 const renderPreview = async () => {
+    const renderId = ++previewRenderId;
     const svgText = await createPreviewSvg();
+    if (renderId !== previewRenderId) return;
     qrElement.replaceChildren();
-    qrElement.innerHTML = svgText;
+    const template = document.createElement("template");
+    template.innerHTML = svgText.trim();
+    qrElement.appendChild(template.content);
 };
 
 // Update function
 const updateQR = () => {
-    void renderPreview();
+    renderPreview().catch((err) => {
+        console.error("QR preview error:", err);
+        qrElement.replaceChildren();
+        const error = document.createElement("p");
+        error.className = "qr-error";
+        error.textContent = t("qr-render-error") || "Could not render this QR code.";
+        qrElement.appendChild(error);
+    });
 
     const qrWrapper = document.querySelector('.qr-wrapper');
     if (qrWrapper) {
@@ -714,9 +804,6 @@ specializedInputs.forEach(id => {
 const getDownloadOptions = (ext) => {
     const resSelect = document.getElementById("download-resolution");
     const res = ext === "png" && resSelect ? parseInt(resSelect.value) : 1200;
-    
-    // Auto-save current config to history
-    saveToHistory(false);
 
     return {
         name: "qr",
@@ -750,6 +837,7 @@ const downloadQr = async (ext) => {
         const pngBlob = await rasterizeSvgToPng(svgText, options.width);
         triggerBlobDownload(pngBlob, `${options.name}.${options.extension}`);
     }
+    saveToHistory(false);
 };
 
 const rasterizeSvgToPng = async (svgText, size) => {
@@ -935,6 +1023,54 @@ const handleScanResult = (data) => {
     scanResultWrapper.scrollIntoView({ behavior: 'smooth' });
 };
 
+const getCurrentFormValues = () => ({
+    url: urlInput.value || "",
+    wifi: {
+        ssid: getInputValue("wifi-ssid"),
+        pass: getInputValue("wifi-pass"),
+        security: getInputValue("wifi-security") || "nopass"
+    },
+    vcard: {
+        fn: getInputValue("vcard-fn"),
+        ln: getInputValue("vcard-ln"),
+        phone: getInputValue("vcard-phone"),
+        email: getInputValue("vcard-email"),
+        org: getInputValue("vcard-org"),
+        url: getInputValue("vcard-url")
+    },
+    email: {
+        to: getInputValue("email-to"),
+        subject: getInputValue("email-subject"),
+        body: getInputValue("email-body")
+    },
+    sms: {
+        phone: getInputValue("sms-phone"),
+        message: getInputValue("sms-message")
+    },
+    phone: {
+        number: getInputValue("phone-number")
+    }
+});
+
+const getStoredHistory = () => {
+    try {
+        const parsed = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        return [];
+    }
+};
+
+const setStoredHistory = (history) => {
+    try {
+        localStorage.setItem("qr_studio_history", JSON.stringify(history.slice(0, MAX_HISTORY_ITEMS)));
+        return true;
+    } catch (err) {
+        console.warn("Could not save QR history:", err);
+        return false;
+    }
+};
+
 if (scanCameraBtn) {
     scanCameraBtn.addEventListener("click", toggleCamera);
 }
@@ -1005,15 +1141,8 @@ if (scanImportBtn) {
         }
         urlInput.value = scanResult.value;
         
-        // Switch tab back to content
-        tabs.forEach(t => t.classList.remove('active'));
-        sections.forEach(s => s.classList.remove('active'));
-        
         const contentTab = document.querySelector('.tab-btn[data-tab="content"]');
-        if (contentTab) contentTab.classList.add('active');
-        
-        const contentSection = document.getElementById('tab-content');
-        if (contentSection) contentSection.classList.add('active');
+        if (contentTab) activateTab(contentTab);
         
         updateQR();
         showLocalizedAlert("imported-to-editor", "Texto importado al editor de contenido.");
@@ -1038,49 +1167,55 @@ const saveToHistory = (manual = false) => {
         style: dotStyleInput.value,
         bg: bgColorInput.value,
         trans: bgTransparentInput.checked,
-        bgImage: currentBgImage,
+        bgImage: "",
+        hasBgImage: Boolean(currentBgImage),
         cornerColor: cornerColorInput.value,
         sq: cornerSquareStyle.value,
         dt: cornerDotStyle.value,
-        logo: currentLogo,
+        logo: "",
+        hasLogo: Boolean(currentLogo),
         logoSize: logoSizeInput.value,
-        hideDots: hideLogoDots.checked
+        hideDots: hideLogoDots.checked,
+        formValues: getCurrentFormValues()
     };
 
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
-    } catch (e) {
-        history = [];
-    }
+    const history = getStoredHistory();
 
     // Prevent duplicates in configuration details
-    const duplicate = history.find(item => item.data === config.data && item.dotColor === config.dotColor && item.bg === config.bg && item.bgImage === config.bgImage && item.logo === config.logo);
+    const duplicate = history.find(item =>
+        item.data === config.data &&
+        item.dotColor === config.dotColor &&
+        item.dotColor2 === config.dotColor2 &&
+        item.bg === config.bg &&
+        item.trans === config.trans &&
+        item.style === config.style
+    );
     if (duplicate) return;
 
     history.unshift(config);
-    if (history.length > 15) history.pop();
-
-    localStorage.setItem("qr_studio_history", JSON.stringify(history));
-    renderHistory();
+    const saved = setStoredHistory(history);
+    if (saved) renderHistory();
 
     if (manual) {
-        alert(t("history-saved-toast") || "¡Guardado en el historial!");
+        alert(saved
+            ? (t("history-saved-toast") || "¡Guardado en el historial!")
+            : (t("history-save-error") || "No se pudo guardar el historial local.")
+        );
     }
 };
 
 const buildHistoryDescription = (item) => {
+    const values = item.formValues || {};
     const rawData = typeof item.data === "string" ? item.data : "";
     let desc = rawData;
 
-    if (desc.startsWith("WIFI:")) {
-        const ssidMatch = desc.match(/S:([^;]+)/);
-        desc = `Wi-Fi: ${ssidMatch ? ssidMatch[1] : "Network"}`;
-    } else if (desc.startsWith("BEGIN:VCARD")) {
-        const fnMatch = desc.match(/FN:([^\n\r]+)/);
-        desc = `Contacto: ${fnMatch ? fnMatch[1] : "vCard"}`;
-    } else if (desc.startsWith("mailto:")) {
-        desc = `Email: ${desc.split("?")[0].replace("mailto:", "")}`;
+    if (item.type === "wifi") {
+        desc = `Wi-Fi: ${values.wifi?.ssid || "Network"}`;
+    } else if (item.type === "vcard") {
+        const name = `${values.vcard?.fn || ""} ${values.vcard?.ln || ""}`.trim();
+        desc = `Contacto: ${name || "vCard"}`;
+    } else if (item.type === "email" || desc.startsWith("mailto:")) {
+        desc = `Email: ${(values.email?.to || parseMailto(desc).to || "").trim()}`;
     } else if (desc.startsWith("tel:")) {
         desc = `Tel: ${desc.replace("tel:", "")}`;
     } else if (desc.length > 30) {
@@ -1094,12 +1229,7 @@ const renderHistory = () => {
     const historyList = document.getElementById("history-list");
     if (!historyList) return;
 
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
-    } catch (e) {
-        history = [];
-    }
+    const history = getStoredHistory();
 
     if (history.length === 0) {
         historyList.replaceChildren();
@@ -1236,45 +1366,35 @@ const loadHistoryItem = (item) => {
         }
     }
 
+    const values = item.formValues || {};
+
     if (item.type === "url") {
-        urlInput.value = item.data;
+        urlInput.value = values.url ?? item.data;
     } else if (item.type === "wifi") {
-        const ssidMatch = item.data.match(/S:([^;]+)/);
-        const passMatch = item.data.match(/P:([^;]+)/);
-        const secMatch = item.data.match(/T:([^;]+)/);
-        document.getElementById("wifi-ssid").value = ssidMatch ? ssidMatch[1] : "";
-        document.getElementById("wifi-pass").value = passMatch ? passMatch[1] : "";
-        document.getElementById("wifi-security").value = secMatch ? secMatch[1] : "WPA";
+        const wifi = values.wifi || {};
+        document.getElementById("wifi-ssid").value = wifi.ssid || "";
+        document.getElementById("wifi-pass").value = wifi.pass || "";
+        document.getElementById("wifi-security").value = wifi.security || "WPA";
     } else if (item.type === "vcard") {
-        const fnMatch = item.data.match(/FN:([^\n\r]+)/);
-        const nameParts = fnMatch ? fnMatch[1].split(' ') : ["", ""];
-        document.getElementById("vcard-fn").value = nameParts[0] || "";
-        document.getElementById("vcard-ln").value = nameParts[1] || "";
-        
-        const telMatch = item.data.match(/TEL;TYPE=CELL:([^\n\r]+)/);
-        document.getElementById("vcard-phone").value = telMatch ? telMatch[1] : "";
-        
-        const emailMatch = item.data.match(/EMAIL:([^\n\r]+)/);
-        document.getElementById("vcard-email").value = emailMatch ? emailMatch[1] : "";
-        
-        const orgMatch = item.data.match(/ORG:([^\n\r]+)/);
-        document.getElementById("vcard-org").value = orgMatch ? orgMatch[1] : "";
-        
-        const urlMatch = item.data.match(/URL:([^\n\r]+)/);
-        document.getElementById("vcard-url").value = urlMatch ? urlMatch[1] : "";
+        const vcard = values.vcard || {};
+        document.getElementById("vcard-fn").value = vcard.fn || "";
+        document.getElementById("vcard-ln").value = vcard.ln || "";
+        document.getElementById("vcard-phone").value = vcard.phone || "";
+        document.getElementById("vcard-email").value = vcard.email || "";
+        document.getElementById("vcard-org").value = vcard.org || "";
+        document.getElementById("vcard-url").value = vcard.url || "";
     } else if (item.type === "email") {
-        const to = item.data.split('?')[0].replace('mailto:', '');
-        const subjectMatch = item.data.match(/subject=([^&]+)/);
-        const bodyMatch = item.data.match(/body=([^&]+)/);
-        document.getElementById("email-to").value = to;
-        document.getElementById("email-subject").value = subjectMatch ? decodeURIComponent(subjectMatch[1]) : "";
-        document.getElementById("email-body").value = bodyMatch ? decodeURIComponent(bodyMatch[1]) : "";
+        const email = values.email || parseMailto(item.data);
+        document.getElementById("email-to").value = email.to || "";
+        document.getElementById("email-subject").value = email.subject || "";
+        document.getElementById("email-body").value = email.body || "";
     } else if (item.type === "sms") {
-        const parts = item.data.replace('SMSTO:', '').split(':');
-        document.getElementById("sms-phone").value = parts[0] || "";
-        document.getElementById("sms-message").value = parts.slice(1).join(':') || "";
+        const sms = values.sms || {};
+        document.getElementById("sms-phone").value = sms.phone || "";
+        document.getElementById("sms-message").value = sms.message || "";
     } else if (item.type === "phone") {
-        document.getElementById("phone-number").value = item.data.replace('tel:', '');
+        const phone = values.phone || {};
+        document.getElementById("phone-number").value = phone.number || item.data.replace('tel:', '');
     }
 
     dotColorInput.value = item.dotColor;
@@ -1283,17 +1403,17 @@ const loadHistoryItem = (item) => {
     dotStyleInput.value = item.style;
     bgColorInput.value = item.bg;
     bgTransparentInput.checked = item.trans;
-    currentBgImage = item.bgImage || "";
+    currentBgImage = "";
     bgImageFileInput.value = "";
     cornerColorInput.value = item.cornerColor;
     cornerSquareStyle.value = item.sq;
     cornerDotStyle.value = item.dt;
-    currentLogo = item.logo || "";
+    currentLogo = "";
     logoSizeInput.value = item.logoSize || "0.4";
     hideLogoDots.checked = item.hideDots !== false;
 
-    if (currentLogo) {
-        fileLabel.querySelector('span').textContent = t("logo-loaded") || "Logo cargado";
+    if (item.hasLogo || item.hasBgImage) {
+        fileLabel.querySelector('span').textContent = t("history-assets-not-restored") || "Assets must be uploaded again";
     } else {
         fileLabel.querySelector('span').textContent = t("btn-upload-logo") || "Subir Logo";
     }
@@ -1303,14 +1423,9 @@ const loadHistoryItem = (item) => {
 };
 
 const deleteHistoryItem = (id) => {
-    let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem("qr_studio_history")) || [];
-    } catch (e) {
-        history = [];
-    }
+    let history = getStoredHistory();
     history = history.filter(x => x.id !== id);
-    localStorage.setItem("qr_studio_history", JSON.stringify(history));
+    setStoredHistory(history);
     renderHistory();
 };
 
@@ -1347,6 +1462,33 @@ if (langSelect) {
     });
 }
 
+const openDialog = (overlay, focusTarget) => {
+    if (!overlay) return;
+    overlay.dataset.previousFocus = document.activeElement?.id || "";
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden", "false");
+    if (focusTarget) {
+        setTimeout(() => focusTarget.focus(), 0);
+    }
+};
+
+const closeDialog = (overlay) => {
+    if (!overlay) return;
+    overlay.classList.remove("active");
+    overlay.setAttribute("aria-hidden", "true");
+    const previousFocusId = overlay.dataset.previousFocus;
+    if (previousFocusId) {
+        const previousFocus = document.getElementById(previousFocusId);
+        if (previousFocus) previousFocus.focus();
+    }
+};
+
+document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (donateOverlay?.classList.contains("active")) closeDialog(donateOverlay);
+    if (contactOverlay?.classList.contains("active")) closeDialog(contactOverlay);
+});
+
 // ─── Donation Popup ───────────────────────────────────────
 const donateOverlay = document.getElementById("donate-overlay");
 const donateBtn = document.getElementById("donate-btn");
@@ -1364,20 +1506,20 @@ const updatePaypalLink = (amount) => {
 
 if (donateBtn) {
     donateBtn.addEventListener("click", () => {
-        donateOverlay.classList.add("active");
+        openDialog(donateOverlay, donateClose);
     });
 }
 
 if (donateClose) {
     donateClose.addEventListener("click", () => {
-        donateOverlay.classList.remove("active");
+        closeDialog(donateOverlay);
     });
 }
 
 if (donateOverlay) {
     donateOverlay.addEventListener("click", (e) => {
         if (e.target === donateOverlay) {
-            donateOverlay.classList.remove("active");
+            closeDialog(donateOverlay);
         }
     });
 }
@@ -1428,7 +1570,7 @@ const contactStatus = document.getElementById("contact-status");
 
 if (contactTrigger) {
     contactTrigger.addEventListener("click", () => {
-        contactOverlay.classList.add("active");
+        openDialog(contactOverlay, document.getElementById("contact-name"));
         if (contactStatus) {
             contactStatus.className = "form-status";
             contactStatus.style.display = "none";
@@ -1438,14 +1580,14 @@ if (contactTrigger) {
 
 if (contactClose) {
     contactClose.addEventListener("click", () => {
-        contactOverlay.classList.remove("active");
+        closeDialog(contactOverlay);
     });
 }
 
 if (contactOverlay) {
     contactOverlay.addEventListener("click", (e) => {
         if (e.target === contactOverlay) {
-            contactOverlay.classList.remove("active");
+            closeDialog(contactOverlay);
         }
     });
 }
@@ -1498,7 +1640,7 @@ if (contactForm) {
                 contactStatus.textContent = t("contact-success") || "¡Mensaje enviado con éxito!";
                 contactForm.reset();
                 setTimeout(() => {
-                    contactOverlay.classList.remove("active");
+                    closeDialog(contactOverlay);
                 }, 3500);
             } else {
                 const errorMsg = data.message || (data.success === "false" || data.success === false ? "FormSubmit error" : `HTTP ${response.status}`);

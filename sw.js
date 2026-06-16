@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qr-studio-v1.6';
+const CACHE_NAME = 'qr-studio-v1.7';
 const ASSETS = [
   './',
   './index.html',
@@ -26,7 +26,7 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => Promise.allSettled(ASSETS.map((asset) => cache.add(asset))))
+      .then((cache) => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
 });
@@ -54,6 +54,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
   const isLocalAsset = url.origin === self.location.origin;
+  const isNavigation = event.request.mode === 'navigate';
 
   if (isLocalAsset) {
     event.respondWith(
@@ -69,8 +70,12 @@ self.addEventListener('fetch', (event) => {
           return response;
         })
         .catch(() => {
-          // Fall back to cache if offline
-          return caches.match(event.request);
+          if (isNavigation) {
+            return caches.match('./index.html');
+          }
+
+          return caches.match(event.request, { ignoreSearch: true })
+            .then((cachedResponse) => cachedResponse || Response.error());
         })
     );
   } else {
@@ -80,15 +85,17 @@ self.addEventListener('fetch', (event) => {
         if (cachedResponse) {
           return cachedResponse;
         }
-        return fetch(event.request).then((response) => {
-          if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
-          return response;
-        });
+        return fetch(event.request)
+          .then((response) => {
+            if (response && response.status === 200) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, responseClone);
+              });
+            }
+            return response;
+          })
+          .catch(() => Response.error());
       })
     );
   }

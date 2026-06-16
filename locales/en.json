@@ -122,5 +122,8 @@
   "res-low": "Low (300px)",
   "res-std": "Standard (600px)",
   "res-high": "High (1200px)",
-  "res-ultra": "Print (2400px)"
+  "res-ultra": "Print (2400px)",
+  "qr-render-error": "Could not render this QR code. Try shortening the content.",
+  "history-save-error": "Could not save the local history.",
+  "history-assets-not-restored": "Logo/background must be uploaded again"
 }

@@ -13,6 +13,7 @@
   --text: #0f172a;
   --text-secondary: #64748b;
   --text-muted: #94a3b8;
+  --danger: #b91c1c;
   --border: #e2e8f0;
   --border-hover: #cbd5e1;
   --input-bg: #f8fafc;
@@ -773,6 +774,14 @@ input[type="range"]::-webkit-slider-thumb {
   object-fit: contain;
 }
 
+.qr-error {
+  max-width: 80%;
+  color: var(--danger);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
 /* ── Action Buttons ── */
 .action-buttons {
   display: flex;
@@ -872,6 +881,12 @@ input[type="range"]::-webkit-slider-thumb {
   font-weight: 500;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   transition: all var(--transition);
+}
+
+button.info-badge-item {
+  appearance: none;
+  font-family: inherit;
+  text-align: left;
 }
 
 .info-badge-item.clickable {

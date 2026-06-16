@@ -112,5 +112,18 @@
   "res-low": "낮음 (300px)",
   "res-std": "표준 (600px)",
   "res-high": "높음 (1200px)",
-  "res-ultra": "인쇄용 (2400px)"
+  "res-ultra": "인쇄용 (2400px)",
+  "footer-privacy-notice": "<strong>Local QR privacy:</strong> QR content, history, and files are processed in your browser. Contact and donation actions use optional external services.",
+  "export-svg-error": "Could not export the SVG.",
+  "export-png-error": "Could not export the PNG.",
+  "scan-no-code-found": "No QR code was detected in the image.",
+  "history-loaded": "History design loaded successfully.",
+  "history-clear-confirm": "Are you sure you want to clear your entire local history?",
+  "history-action-load": "Load",
+  "history-action-delete": "Delete",
+  "logo-loaded": "Logo loaded",
+  "imported-to-editor": "Text imported into the content editor.",
+  "qr-render-error": "Could not render this QR code. Try shortening the content.",
+  "history-save-error": "Could not save the local history.",
+  "history-assets-not-restored": "Logo/background must be uploaded again"
 }
