@@ -324,7 +324,7 @@ const getSvgShapeRendering = () => {
 };
 
 const expandModuleRects = (svg) => {
-    if (dotStyleInput.value === "dots") return;
+    if (dotStyleInput.value !== "square") return;
 
     const rects = svg.querySelectorAll("rect");
     const overlap = 0.2;
