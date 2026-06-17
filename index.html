@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Studio — QR Gratis</title>
+    <meta name="description" content="Crea códigos QR vectoriales profesionales 100% gratis y sin registro ni suscripción. Exporta en SVG y PNG de alta resolución con total privacidad local.">
+    <meta name="keywords" content="generador de codigo qr, creador qr gratis, qr sin suscripcion, codigo qr vector, qr svg gratis, qr maker online free">
+
+    <!-- Baidu Mobile Friendly Optimization -->
+    <meta name="applicable-device" content="pc,mobile">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-512.png">
+    <meta name="theme-color" content="#1e293b">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://formsubmit.co; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:;">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="QR Studio — QR Gratis">
+    <meta property="og:description" content="Generador de códigos QR con diseño premium 100% gratis, sin suscripción ni registro. Exportación vectorial en SVG y privacidad absoluta.">
+    <meta property="og:image" content="https://qr-studio-ochre.vercel.app/icon-512.png">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="QR Studio — QR Gratis">
+    <meta property="twitter:description" content="Generador premium de códigos QR. Libre, privado, 100% gratis y sin suscripción.">
+    <meta property="twitter:image" content="https://qr-studio-ochre.vercel.app/icon-512.png">
+
+    <link rel="canonical" href="https://qr-studio-ochre.vercel.app/">
+
+    <!-- Multi-language Alternate Indexing (SEO hreflang) -->
+    <link rel="alternate" hreflang="es" href="https://qr-studio-ochre.vercel.app/?lang=es">
+    <link rel="alternate" hreflang="en" href="https://qr-studio-ochre.vercel.app/?lang=en">
+    <link rel="alternate" hreflang="zh" href="https://qr-studio-ochre.vercel.app/?lang=zh">
+    <link rel="alternate" hreflang="ar" href="https://qr-studio-ochre.vercel.app/?lang=ar">
+    <link rel="alternate" hreflang="ru" href="https://qr-studio-ochre.vercel.app/?lang=ru">
+    <link rel="alternate" hreflang="de" href="https://qr-studio-ochre.vercel.app/?lang=de">
+    <link rel="alternate" hreflang="it" href="https://qr-studio-ochre.vercel.app/?lang=it">
+    <link rel="alternate" hreflang="pl" href="https://qr-studio-ochre.vercel.app/?lang=pl">
+    <link rel="alternate" hreflang="pt" href="https://qr-studio-ochre.vercel.app/?lang=pt">
+    <link rel="alternate" hreflang="fr" href="https://qr-studio-ochre.vercel.app/?lang=fr">
+    <link rel="alternate" hreflang="ja" href="https://qr-studio-ochre.vercel.app/?lang=ja">
+    <link rel="alternate" hreflang="ko" href="https://qr-studio-ochre.vercel.app/?lang=ko">
+    <link rel="alternate" hreflang="x-default" href="https://qr-studio-ochre.vercel.app/">
+
+    <!-- JSON-LD Structured Data for WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "QR Studio",
+      "alternateName": "Generador Profesional y Gratis de Códigos QR",
+      "description": "Crea códigos QR vectoriales con diseño profesional 100% gratis y sin suscripción. Totalmente privado, procesamiento local y descargas SVG y PNG de alta resolución sin registro.",
+      "url": "https://qr-studio-ochre.vercel.app/",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+      "inLanguage": ["es", "en", "zh", "ar", "ru", "de", "it", "pl", "pt", "fr", "ja", "ko"],
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD",
+        "category": "Free",
+        "description": "Totalmente gratis sin suscripciones ni anuncios molestos. Sin límites de escaneo ni fechas de caducidad."
+      }
+    }
+    </script>
+
+    <script type="text/javascript"
+      src="./vendor/qr-code-styling.js"></script>
+    <script type="text/javascript"
+      src="./vendor/jsQR.js"></script>
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- Sidebar Controls -->
+        <aside class="sidebar">
+            <header class="header">
+                <div class="brand">
+                    <svg class="brand-icon" aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="3" height="3" rx="0.5"/>
+                        <rect x="18" y="18" width="3" height="3" rx="0.5"/>
+                        <rect x="14" y="18" width="3" height="3" rx="0.5"/>
+                    </svg>
+                    <div>
+                        <h1>QR Studio</h1>
+                        <p class="subtitle" data-i18n="subtitle">QR Gratis</p>
+                    </div>
+                </div>
+                <div class="lang-selector">
+                    <select id="lang-select">
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                        <option value="zh">中文</option>
+                        <option value="ru">Русский</option>
+                        <option value="de">Deutsch</option>
+                        <option value="it">Italiano</option>
+                        <option value="pl">Polski</option>
+                        <option value="pt">Português</option>
+                        <option value="fr">Français</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                        <option value="ar">العربية</option>
+                    </select>
+                </div>
+            </header>
+            <nav class="tabs" role="tablist" aria-label="QR Studio">
+                <button class="tab-btn active" data-tab="content" role="tab" aria-selected="true" aria-controls="tab-content">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v18m9-9H3"/></svg>
+                    <span data-i18n="tab-content">Contenido</span>
+                </button>
+                <button class="tab-btn" data-tab="style" role="tab" aria-selected="false" aria-controls="tab-style">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.636-6.364l-1.414 1.414M6.05 17.95l-1.414 1.414m0-12.728l1.414 1.414m11.314 11.314l1.414 1.414"/></svg>
+                    <span data-i18n="tab-style">Estilo</span>
+                </button>
+                <button class="tab-btn" data-tab="logo" role="tab" aria-selected="false" aria-controls="tab-logo">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <span data-i18n="tab-logo">Logo</span>
+                </button>
+                <button class="tab-btn" data-tab="scan" role="tab" aria-selected="false" aria-controls="tab-scan">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M3 7V5a2 2 0 012-2h2m10 0h2a2 2 0 012 2v2m0 10v2a2 2 0 01-2 2h-2m-10 0H5a2 2 0 01-2-2v-2M7 12h10"/>
+                    </svg>
+                    <span data-i18n="tab-scan">Escáner</span>
+                </button>
+            </nav>
+
+            <!-- Tab Content: Content -->
+            <div id="tab-content" class="control-section active" role="tabpanel">
+                <div class="input-group">
+                    <label for="content-type-select" data-i18n="label-content-type">Tipo de Contenido</label>
+                    <select id="content-type-select">
+                        <option value="url" data-i18n="content-type-url" selected>URL o Texto</option>
+                        <option value="wifi" data-i18n="content-type-wifi">Red Wi-Fi</option>
+                        <option value="vcard" data-i18n="content-type-vcard">Contacto (vCard)</option>
+                        <option value="email" data-i18n="content-type-email">Correo Electrónico</option>
+                        <option value="sms" data-i18n="content-type-sms">Mensaje SMS</option>
+                        <option value="phone" data-i18n="content-type-phone">Número de Teléfono</option>
+                    </select>
+                </div>
+
+                <!-- URL/Texto Form -->
+                <div id="form-url" class="content-subform active">
+                    <div class="input-group">
+                        <label for="url-input" data-i18n="label-url">URL o Texto</label>
+                        <input type="text" id="url-input" data-i18n-placeholder="placeholder-url" placeholder="https://tu-sitio.com" value="https://hypstudio.cl">
+                    </div>
+                </div>
+
+                <!-- Wi-Fi Form -->
+                <div id="form-wifi" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="wifi-ssid" data-i18n="label-wifi-ssid">Nombre de la Red (SSID)</label>
+                        <input type="text" id="wifi-ssid" placeholder="My Wi-Fi Network">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-pass" data-i18n="label-wifi-pass">Contraseña</label>
+                        <input type="text" id="wifi-pass" placeholder="••••••••">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-security" data-i18n="label-wifi-security">Seguridad</label>
+                        <select id="wifi-security">
+                            <option value="WPA" selected>WPA/WPA2</option>
+                            <option value="WEP">WEP</option>
+                            <option value="nopass" data-i18n="grad-none">Ninguno</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- vCard Form -->
+                <div id="form-vcard" class="content-subform" style="display: none;">
+                    <div class="select-row">
+                        <div class="input-group">
+                            <label for="vcard-fn" data-i18n="label-vcard-fn">Nombre</label>
+                            <input type="text" id="vcard-fn" placeholder="Juan">
+                        </div>
+                        <div class="input-group">
+                            <label for="vcard-ln" data-i18n="label-vcard-ln">Apellido</label>
+                            <input type="text" id="vcard-ln" placeholder="Pérez">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-phone" data-i18n="label-vcard-phone">Teléfono</label>
+                        <input type="text" id="vcard-phone" placeholder="+123456789">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-email" data-i18n="label-vcard-email">Correo</label>
+                        <input type="text" id="vcard-email" placeholder="juan@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-org" data-i18n="label-vcard-org">Organización</label>
+                        <input type="text" id="vcard-org" placeholder="Mi Empresa">
+                    </div>
+                    <div class="input-group">
+                        <label for="vcard-url" data-i18n="label-vcard-url">Sitio Web</label>
+                        <input type="text" id="vcard-url" placeholder="https://mi-sitio.com">
+                    </div>
+                </div>
+
+                <!-- Email Form -->
+                <div id="form-email" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="email-to" data-i18n="contact-label-email">Tu correo electrónico</label>
+                        <input type="text" id="email-to" placeholder="ejemplo@correo.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-subject" data-i18n="label-email-subject">Asunto</label>
+                        <input type="text" id="email-subject" placeholder="Hola">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-body" data-i18n="label-email-body">Cuerpo del mensaje</label>
+                        <input type="text" id="email-body" placeholder="Escribe el mensaje...">
+                    </div>
+                </div>
+
+                <!-- SMS Form -->
+                <div id="form-sms" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="sms-phone" data-i18n="label-phone-number">Número de Teléfono</label>
+                        <input type="text" id="sms-phone" placeholder="+123456789">
+                    </div>
+                    <div class="input-group">
+                        <label for="sms-message" data-i18n="label-sms-message">Mensaje</label>
+                        <input type="text" id="sms-message" placeholder="Escribe tu mensaje...">
+                    </div>
+                </div>
+
+                <!-- Phone Form -->
+                <div id="form-phone" class="content-subform" style="display: none;">
+                    <div class="input-group">
+                        <label for="phone-number" data-i18n="label-phone-number">Número de Teléfono</label>
+                        <input type="text" id="phone-number" placeholder="+123456789">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Style -->
+            <div id="tab-style" class="control-section" role="tabpanel" hidden>
+                <div class="input-group">
+                    <label data-i18n="label-modules">Módulos</label>
+                    <div class="color-grid">
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-main-color">Color Principal</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" id="dot-color" value="#1e293b">
+                                <span class="color-hex" id="dot-color-hex">#1e293b</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-secondary-color">Color Secundario</label>
+                            <div class="color-input-wrapper">
+                                <input type="color" id="dot-color-2" value="#334155">
+                                <span class="color-hex" id="dot-color-2-hex">#334155</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="select-row">
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-gradient">Gradiente</label>
+                            <select id="dot-gradient-type">
+                                <option value="none" data-i18n="grad-none">Ninguno</option>
+                                <option value="linear" data-i18n="grad-linear">Lineal</option>
+                                <option value="radial" data-i18n="grad-radial">Radial</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-shape">Forma</label>
+                            <select id="dot-style">
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dots" data-i18n="shape-dots">Puntos</option>
+                                <option value="rounded" data-i18n="shape-rounded">Redondo</option>
+                                <option value="extra-rounded" data-i18n="shape-extra-rounded">Suave</option>
+                                <option value="classy" data-i18n="shape-classy">Elegante</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="label-background">Fondo</label>
+                    <div class="bg-controls">
+                        <div class="color-input-wrapper">
+                            <input type="color" id="bg-color" value="#ffffff">
+                            <span class="color-hex" id="bg-color-hex">#ffffff</span>
+                        </div>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="bg-transparent">
+                            <span data-i18n="label-transparent">Transparente</span>
+                        </label>
+                    </div>
+                    <div class="file-upload">
+                        <label for="bg-image-file">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                            <span data-i18n="label-bg-image">Imagen de fondo</span>
+                        </label>
+                        <input type="file" id="bg-image-file" accept="image/*">
+                    </div>
+                    <button type="button" id="clear-bg-image" class="btn btn-outline" data-i18n="btn-clear-bg">Quitar fondo</button>
+                </div>
+
+                <div class="input-group">
+                    <label data-i18n="label-corners">Esquinas</label>
+                    <div class="select-row">
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-frame">Marco</label>
+                            <select id="corner-square-style">
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dot" data-i18n="shape-dots">Punto</option>
+                                <option value="extra-rounded" data-i18n="shape-rounded">Redondo</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="label-sm" data-i18n="label-center">Centro</label>
+                            <select id="corner-dot-style">
+                                <option value="square" data-i18n="shape-square">Cuadrado</option>
+                                <option value="dot" data-i18n="shape-dots">Punto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="color-input-wrapper">
+                        <input type="color" id="corner-color" value="#1e293b">
+                        <span class="color-hex" data-i18n="label-corner-color">Color esquinas</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Logo -->
+            <div id="tab-logo" class="control-section" role="tabpanel" hidden>
+                <div class="input-group">
+                    <label data-i18n="label-center-logo">Logo central</label>
+                    <div class="file-upload">
+                        <label for="logo-file" id="file-label">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
+                            </svg>
+                            <span data-i18n="btn-upload-logo">Subir Logo</span>
+                        </label>
+                        <input type="file" id="logo-file" accept="image/*">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="hide-logo-dots" checked>
+                        <span data-i18n="label-hide-dots">Ocultar puntos detrás del logo</span>
+                    </label>
+                </div>
+                <div class="input-group">
+                    <label for="logo-size"><span data-i18n="label-logo-size">Tamaño del logo: </span><span id="logo-size-val">0.4</span></label>
+                    <input type="range" id="logo-size" value="0.4" step="0.05" min="0.1" max="0.5">
+                </div>
+                <button id="clear-logo" class="btn btn-outline" data-i18n="btn-clear-logo">Quitar Logo</button>
+            </div>
+
+            <!-- Tab Content: Scanner -->
+            <div id="tab-scan" class="control-section" role="tabpanel" hidden>
+                <div class="scanner-container">
+                    <div class="scanner-camera-wrapper">
+                        <video id="scan-video" playsinline></video>
+                        <canvas id="scan-canvas" style="display: none;"></canvas>
+                        <div class="scanner-overlay" id="scanner-overlay" style="display: none;">
+                            <div class="scanner-laser"></div>
+                        </div>
+                    </div>
+                    <button type="button" id="scan-camera-btn" class="btn btn-primary" data-i18n="scan-start-camera">Iniciar Cámara</button>
+                    
+                    <div style="text-align: center; margin: 0.5rem 0; font-size: 0.75rem; color: var(--text-muted);">— O —</div>
+
+                    <div class="file-upload">
+                        <label for="scan-file-input">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12"></path>
+                            </svg>
+                            <span data-i18n="scan-upload-btn">Subir imagen de QR</span>
+                        </label>
+                        <input type="file" id="scan-file-input" accept="image/*">
+                    </div>
+
+                    <div id="scan-status" class="scan-status" style="display: none;"></div>
+
+                    <div id="scan-result-wrapper" class="input-group" style="display: none; margin-top: 1rem;">
+                        <label for="scan-result" data-i18n="scan-success-msg">¡Código QR detectado con éxito!</label>
+                        <textarea id="scan-result" readonly rows="3" style="resize: none; font-size: 0.85rem; padding: 0.5rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; width: 100%;"></textarea>
+                        <div class="action-buttons" style="margin-top: 0.5rem;">
+                            <button type="button" id="scan-copy-btn" class="btn btn-secondary">
+                                <span data-i18n="btn-copy">Copiar</span>
+                            </button>
+                            <button type="button" id="scan-import-btn" class="btn btn-primary">
+                                <span data-i18n="btn-import">Importar</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predefined Styles (Presets) - Extracted out of tab wrappers so it stays visible -->
+            <div class="input-group minimized-presets" id="presets-container-group">
+                <label data-i18n="label-presets">Selección Rápida</label>
+                <div class="presets-grid">
+                    <button class="preset-btn" data-preset="corporate">
+                        <span class="preset-swatch preset-corporate" aria-hidden="true"></span>
+                        <span data-i18n="preset-corporate">Corporativo</span>
+                    </button>
+                    <button class="preset-btn" data-preset="minimal">
+                        <span class="preset-swatch preset-minimal" aria-hidden="true"></span>
+                        <span data-i18n="preset-minimal">Minimal</span>
+                    </button>
+                    <button class="preset-btn" data-preset="midnight">
+                        <span class="preset-swatch preset-midnight" aria-hidden="true"></span>
+                        <span data-i18n="preset-midnight">Midnight</span>
+                    </button>
+                    <button class="preset-btn" data-preset="sage">
+                        <span class="preset-swatch preset-sage" aria-hidden="true"></span>
+                        <span data-i18n="preset-sage">Sage</span>
+                    </button>
+                    <button class="preset-btn" data-preset="ocean">
+                        <span class="preset-swatch preset-ocean" aria-hidden="true"></span>
+                        <span data-i18n="preset-ocean">Ocean</span>
+                    </button>
+                    <button class="preset-btn" data-preset="rose">
+                        <span class="preset-swatch preset-rose" aria-hidden="true"></span>
+                        <span data-i18n="preset-rose">Rosé</span>
+                    </button>
+                    <button class="preset-btn" data-preset="sunset">
+                        <span class="preset-swatch preset-sunset" aria-hidden="true"></span>
+                        <span data-i18n="preset-sunset">Sunset</span>
+                    </button>
+                    <button class="preset-btn" data-preset="slate">
+                        <span class="preset-swatch preset-slate" aria-hidden="true"></span>
+                        <span data-i18n="preset-slate">Slate</span>
+                    </button>
+                    <button class="preset-btn" data-preset="noir">
+                        <span class="preset-swatch preset-noir" aria-hidden="true"></span>
+                        <span data-i18n="preset-noir">Noir</span>
+                    </button>
+                </div>
+                <button type="button" id="presets-toggle-btn" class="presets-toggle-btn" data-i18n="presets-show-more">Mostrar más</button>
+            </div>
+
+            <!-- Resolution Selector -->
+            <div class="input-group" id="resolution-container-group" style="margin-top: 0.25rem;">
+                <label for="download-resolution" data-i18n="label-resolution">Tamaño de descarga PNG</label>
+                <select id="download-resolution" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; width: 100%;">
+                    <option value="300" data-i18n="res-low">Baja (300px)</option>
+                    <option value="600" selected data-i18n="res-std">Estándar (600px)</option>
+                    <option value="1200" data-i18n="res-high">Alta (1200px)</option>
+                    <option value="2400" data-i18n="res-ultra">Impresión (2400px)</option>
+                </select>
+            </div>
+
+            <!-- Creation History -->
+            <div class="input-group minimized-presets" id="history-container-group" style="margin-top: 0.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label data-i18n="label-history">Historial de Creaciones</label>
+                    <button type="button" id="history-clear-btn" style="background: none; border: none; font-size: 0.65rem; color: var(--text-muted); cursor: pointer; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;" data-i18n="btn-history-clear">Limpiar</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- Dynamic history loaded from localStorage -->
+                </div>
+            </div>
+
+            <footer class="sidebar-footer">
+                <p data-i18n="footer-privacy-notice"><strong>Privacidad local para generar QR:</strong> El contenido, historial y archivos del QR se procesan en tu navegador. Los formularios de contacto y donación usan servicios externos opcionales.</p>
+                <div class="footer-credits">
+                    <p>By <strong>Hypstudio</strong> — Christian Vergara</p>
+                    <button id="donate-btn" class="btn-donate">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+                        <span data-i18n="btn-donate-text">Apoyar con una donación</span>
+                    </button>
+                </div>
+            </footer>
+        </aside>
+
+        <!-- Preview Area -->
+        <main class="preview-area">
+            <div class="info-badge">
+                <div class="info-badge-item">
+                    <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M12 8V12"></path><path d="M12 16H12.01"></path></svg>
+                    <span data-i18n="badge-no-expire">El código QR no caduca y es ilimitado</span>
+                </div>
+                <button type="button" class="info-badge-item clickable" id="contact-trigger">
+                    <svg class="info-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
+                    <span data-i18n="badge-suggestion">¿Sugerencias o solicitudes? Envíanos un mensaje</span>
+                </button>
+            </div>
+
+            <div class="preview-card">
+                <div class="qr-wrapper">
+                    <div id="qrcode" class="style-square"></div>
+                </div>
+            </div>
+            <div class="preview-actions-card">
+                <div class="action-buttons">
+                    <button id="download-svg" class="btn btn-primary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
+                        </svg>
+                        <span data-i18n="btn-download-svg">SVG</span>
+                    </button>
+                    <button id="download-png" class="btn btn-secondary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
+                        </svg>
+                        <span data-i18n="btn-download-png">PNG</span>
+                    </button>
+                    <button id="copy-qr" class="btn btn-secondary">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                        </svg>
+                        <span data-i18n="btn-copy-qr">Copiar</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Donation Popup -->
+    <div id="donate-overlay" class="donate-overlay" aria-hidden="true">
+        <div class="donate-popup" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+            <button type="button" id="donate-close" class="donate-close" aria-label="Cerrar">&times;</button>
+            <div class="donate-icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path></svg>
+            </div>
+            <h2 id="donate-title" data-i18n="donate-title">Apoya este proyecto</h2>
+            <p class="donate-desc" data-i18n="donate-description">Si QR Studio te ha sido útil, considera apoyar su desarrollo con una donación voluntaria.</p>
+            <div class="donate-amounts">
+                <button type="button" class="donate-amount" data-amount="2">$2</button>
+                <button type="button" class="donate-amount" data-amount="5">$5</button>
+                <button type="button" class="donate-amount active" data-amount="10">$10</button>
+                <button type="button" class="donate-amount" data-amount="25">$25</button>
+                <button type="button" class="donate-amount" id="donate-other-btn" data-i18n="donate-other">Otro monto</button>
+            </div>
+            <div class="donate-custom" id="donate-custom-wrap" style="display: none;">
+                <input type="number" id="donate-custom-input" min="1" data-i18n-placeholder="donate-placeholder" placeholder="Escribe el monto en USD">
+            </div>
+            <a id="donate-paypal" href="https://paypal.me/hyperionhych/10" target="_blank" rel="noopener" class="btn-paypal" data-i18n="donate-btn-paypal">
+                Donar con PayPal
+            </a>
+            <p class="donate-footer" data-i18n="donate-footer-text">Serás redirigido a PayPal de forma segura.</p>
+        </div>
+    </div>
+
+    <!-- Contact Popup -->
+    <div id="contact-overlay" class="contact-overlay" aria-hidden="true">
+        <div class="contact-popup" role="dialog" aria-modal="true" aria-labelledby="contact-title">
+            <button type="button" id="contact-close" class="contact-close" aria-label="Cerrar">&times;</button>
+            <div class="contact-icon">
+                <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path></svg>
+            </div>
+            <h2 id="contact-title" data-i18n="contact-title">Enviar mensaje</h2>
+            <form id="contact-form" class="contact-form">
+                <div class="form-group">
+                    <label for="contact-name" data-i18n="contact-label-name">Tu nombre</label>
+                    <input type="text" id="contact-name" required data-i18n-placeholder="contact-placeholder-name" placeholder="Escribe tu nombre">
+                </div>
+                <div class="form-group">
+                    <label for="contact-email" data-i18n="contact-label-email">Tu correo electrónico</label>
+                    <input type="email" id="contact-email" required data-i18n-placeholder="contact-placeholder-email" placeholder="ejemplo@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="contact-message" data-i18n="contact-label-message">Mensaje</label>
+                    <textarea id="contact-message" required rows="4" data-i18n-placeholder="contact-placeholder-message" placeholder="Escribe tu mensaje..."></textarea>
+                </div>
+                <button type="submit" id="contact-submit" class="btn-send">
+                    <span data-i18n="contact-btn-send">Enviar mensaje</span>
+                </button>
+                <div id="contact-status" class="form-status" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

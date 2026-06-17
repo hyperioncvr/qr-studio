@@ -1,0 +1,9 @@
+{
+  "name": "qr-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check script.js && node --check sw.js && node scripts/validate.mjs && node scripts/qr-payloads.test.mjs"
+  }
+}
