@@ -524,16 +524,12 @@ const createPreviewSvg = async () => {
     return normalizeSvgText(await raw.text());
 };
 
-const createPreviewBitmap = async () => {
-    const svgText = await createPreviewSvg();
-    return await rasterizeSvgToPng(svgText, QR_PREVIEW_SIZE);
-};
-
 const renderPreview = async () => {
     const renderId = ++previewRenderId;
-    const previewBlob = await createPreviewBitmap();
+    const svgText = await createPreviewSvg();
     if (renderId !== previewRenderId) return;
     qrElement.replaceChildren();
+    const previewBlob = new Blob([svgText], { type: "image/svg+xml;charset=utf-8" });
     const previewUrl = URL.createObjectURL(previewBlob);
     const previewImg = document.createElement("img");
     previewImg.alt = "";
