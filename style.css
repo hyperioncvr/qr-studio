@@ -836,6 +836,76 @@ input[type="range"]::-webkit-slider-thumb {
   transform: translateY(-1px);
 }
 
+.png-download-group {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.png-download-main {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  min-width: 0;
+}
+
+.png-download-main span[data-i18n="btn-download-png"] {
+  white-space: nowrap;
+}
+
+.png-download-size {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.png-download-toggle {
+  flex: 0 0 auto;
+  width: 2.5rem;
+  border-left: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0;
+}
+
+.png-download-toggle svg {
+  pointer-events: none;
+}
+
+.png-download-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.5rem);
+  min-width: 160px;
+  padding: 0.35rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-white);
+  box-shadow: var(--shadow-lg);
+  z-index: 20;
+}
+
+.png-download-option {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.png-download-option:hover,
+.png-download-option[aria-pressed="true"] {
+  background: var(--input-bg);
+}
+
 .btn-outline {
   width: 100%;
   padding: 0.5rem;

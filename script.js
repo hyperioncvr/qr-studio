@@ -191,10 +191,15 @@ const fileLabel = document.getElementById("file-label");
 const dotColorHex = document.getElementById("dot-color-hex");
 const dotColor2Hex = document.getElementById("dot-color-2-hex");
 const bgColorHex = document.getElementById("bg-color-hex");
+const downloadPngSizeLabel = document.getElementById("download-png-size");
+const downloadPngToggle = document.getElementById("download-png-toggle");
+const downloadPngMenu = document.getElementById("download-png-menu");
+const downloadPngOptions = document.querySelectorAll("[data-png-size]");
 
 // State
 let currentLogo = "";
 let currentBgImage = "";
+let currentPngResolution = 600;
 let debounceTimer;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const QR_PREVIEW_SIZE = 720;
@@ -211,6 +216,36 @@ const revokePresetSwatchUrls = () => {
     while (presetSwatchUrls.length) {
         URL.revokeObjectURL(presetSwatchUrls.pop());
     }
+};
+
+const PNG_RESOLUTIONS = [300, 600, 1200, 2400];
+
+const setPngResolution = (size) => {
+    const nextSize = Number(size);
+    if (!PNG_RESOLUTIONS.includes(nextSize)) return;
+    currentPngResolution = nextSize;
+    if (downloadPngSizeLabel) {
+        downloadPngSizeLabel.textContent = `${nextSize}px`;
+    }
+    if (downloadPngOptions) {
+        downloadPngOptions.forEach((option) => {
+            const isActive = Number(option.dataset.pngSize) === nextSize;
+            option.setAttribute("aria-pressed", String(isActive));
+        });
+    }
+};
+
+const closePngMenu = () => {
+    if (!downloadPngMenu || !downloadPngToggle) return;
+    downloadPngMenu.hidden = true;
+    downloadPngToggle.setAttribute("aria-expanded", "false");
+};
+
+const togglePngMenu = () => {
+    if (!downloadPngMenu || !downloadPngToggle) return;
+    const shouldOpen = downloadPngMenu.hidden;
+    downloadPngMenu.hidden = !shouldOpen;
+    downloadPngToggle.setAttribute("aria-expanded", String(shouldOpen));
 };
 
 // Tab Logic
@@ -838,8 +873,7 @@ specializedInputs.forEach(id => {
 
 // Download logic
 const getDownloadOptions = (ext) => {
-    const resSelect = document.getElementById("download-resolution");
-    const res = ext === "png" && resSelect ? parseInt(resSelect.value) : 1200;
+    const res = ext === "png" ? currentPngResolution : 1200;
 
     return {
         name: "qr",
@@ -920,11 +954,45 @@ document.getElementById("download-svg").addEventListener("click", () => {
     });
 });
 document.getElementById("download-png").addEventListener("click", () => {
+    closePngMenu();
     downloadQr("png").catch((err) => {
         console.error("PNG export error:", err);
         showLocalizedAlert("export-png-error", "No se pudo exportar el PNG.");
     });
 });
+
+if (downloadPngToggle) {
+    downloadPngToggle.addEventListener("click", (event) => {
+        event.stopPropagation();
+        togglePngMenu();
+    });
+}
+
+if (downloadPngMenu) {
+    downloadPngMenu.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-png-size]");
+        if (!button) return;
+        setPngResolution(button.dataset.pngSize);
+        closePngMenu();
+        event.stopPropagation();
+    });
+}
+
+document.addEventListener("click", (event) => {
+    if (!downloadPngMenu || downloadPngMenu.hidden) return;
+    const container = document.querySelector(".png-download-group");
+    if (container && !container.contains(event.target)) {
+        closePngMenu();
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closePngMenu();
+    }
+});
+
+setPngResolution(currentPngResolution);
 
 const getQrBlobForClipboard = async () => {
     ensureNonTransparentBackground();

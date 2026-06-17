@@ -440,17 +440,6 @@
                 <button type="button" id="presets-toggle-btn" class="presets-toggle-btn" data-i18n="presets-show-more">Mostrar más</button>
             </div>
 
-            <!-- Resolution Selector -->
-            <div class="input-group" id="resolution-container-group" style="margin-top: 0.25rem;">
-                <label for="download-resolution" data-i18n="label-resolution">Tamaño de descarga PNG</label>
-                <select id="download-resolution" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; width: 100%;">
-                    <option value="300" data-i18n="res-low">Baja (300px)</option>
-                    <option value="600" selected data-i18n="res-std">Estándar (600px)</option>
-                    <option value="1200" data-i18n="res-high">Alta (1200px)</option>
-                    <option value="2400" data-i18n="res-ultra">Impresión (2400px)</option>
-                </select>
-            </div>
-
             <!-- Creation History -->
             <div class="input-group minimized-presets" id="history-container-group" style="margin-top: 0.25rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
@@ -500,12 +489,26 @@
                         </svg>
                         <span data-i18n="btn-download-svg">SVG</span>
                     </button>
-                    <button id="download-png" class="btn btn-secondary">
-                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
-                        </svg>
-                        <span data-i18n="btn-download-png">PNG</span>
-                    </button>
+                    <div class="png-download-group">
+                        <button id="download-png" class="btn btn-secondary png-download-main" type="button">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"></path>
+                            </svg>
+                            <span data-i18n="btn-download-png">PNG</span>
+                            <span id="download-png-size" class="png-download-size">600px</span>
+                        </button>
+                        <button id="download-png-toggle" class="btn btn-secondary png-download-toggle" type="button" aria-label="Cambiar tamaño PNG" aria-haspopup="menu" aria-expanded="false">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </button>
+                        <div id="download-png-menu" class="png-download-menu" role="menu" hidden>
+                            <button type="button" class="png-download-option" data-png-size="300" role="menuitem">300px</button>
+                            <button type="button" class="png-download-option" data-png-size="600" role="menuitem">600px</button>
+                            <button type="button" class="png-download-option" data-png-size="1200" role="menuitem">1200px</button>
+                            <button type="button" class="png-download-option" data-png-size="2400" role="menuitem">2400px</button>
+                        </div>
+                    </div>
                     <button id="copy-qr" class="btn btn-secondary">
                         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
