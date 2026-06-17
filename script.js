@@ -974,6 +974,10 @@ if (downloadPngMenu) {
         if (!button) return;
         setPngResolution(button.dataset.pngSize);
         closePngMenu();
+        downloadQr("png").catch((err) => {
+            console.error("PNG export error:", err);
+            showLocalizedAlert("export-png-error", "No se pudo exportar el PNG.");
+        });
         event.stopPropagation();
     });
 }
