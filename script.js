@@ -893,24 +893,16 @@ const rasterizeSvgToPng = async (svgText, size) => {
             img.onerror = () => reject(new Error("svg-rasterize-error"));
             img.src = svgUrl;
         });
-        const renderScale = 4;
-        const renderSize = size * renderScale;
-        const renderCanvas = document.createElement("canvas");
-        renderCanvas.width = renderSize;
-        renderCanvas.height = renderSize;
-        const renderCtx = renderCanvas.getContext("2d");
-        renderCtx.clearRect(0, 0, renderSize, renderSize);
-        renderCtx.drawImage(image, 0, 0, renderSize, renderSize);
-
         const canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
         const ctx = canvas.getContext("2d");
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+        // Draw the SVG directly at the target size to avoid resampling seams
+        // between adjacent QR modules.
+        ctx.imageSmoothingEnabled = false;
         ctx.fillStyle = getBackgroundColorForQr();
         ctx.fillRect(0, 0, size, size);
-        ctx.drawImage(renderCanvas, 0, 0, renderSize, renderSize, 0, 0, size, size);
+        ctx.drawImage(image, 0, 0, size, size);
         return await new Promise((resolve, reject) => {
             canvas.toBlob((blob) => {
                 if (blob) {
